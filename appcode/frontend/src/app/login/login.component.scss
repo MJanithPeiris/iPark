@@ -1,0 +1,168 @@
+.imageDiv{
+  height: 100%;
+  background-image: url('../../assets/images/background.png') !important;
+  background-position: right;
+  background-repeat: no-repeat;
+  background-size: contain;
+  float: right;
+  .lable_ipark{
+    color: #000000;
+    font-size: 125px;
+    font-weight: 500;
+    position: absolute;
+    top: 50%;
+    margin-left: 0;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+}
+  
+.form_login, .form_forget_password, .form_reset_password{
+  background-color: #d4e6f1;
+  border: solid 2px #000000;
+  border-radius: 3px;
+  box-sizing: border-box;
+  height: 500px;
+  margin-left: 10%;
+  width: 400px;
+  padding-bottom: 40px;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  text-align: center;
+  
+  
+  .lable_welcome {
+    color: #000000;
+    font-size: 32px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    padding-top: 30px;
+    
+  }
+  .lable_forget_password {
+    color: #000000;
+    font-size: 32px;
+    font-weight: 600;
+    display: flex;
+    justify-content: left;
+    padding-top: 80px;
+    margin-left: 10%;
+  }
+  .profile_image{
+    position: absolute;
+    left: 50%;
+    margin: -85px 0 0 -40px;
+    .ellipse {
+      background-color: #154360;
+      border-radius: 35px;
+      height: 70px;
+      left: 3px;
+      position: absolute;
+      top: 5px;
+      width: 70px;
+      margin-top: 110px;
+      margin-left: 25%;
+    }
+    .image {
+      height: 80px;
+      left: 0;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      vertical-align: top;
+      width: 80px;
+      margin-top: 110px;
+    }
+  }
+  .lable_info{
+    color: #000000;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 10px;
+    margin-left: 10%;
+    margin-bottom: 4%;
+    float: left;
+  }
+  .lable_email {
+    color: #000000;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 120px;
+    margin-left: 10%;
+    float: left;
+  }
+  .lable_email_address{
+    color: #000000;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 10px;
+    float: left;
+    margin-left: 10%;
+  }
+  .lable_password {
+    color: #000000;
+    font-size: 16px;
+    font-weight: 500;
+    margin-left: 10%;
+    padding-top: 4%;
+    float: left;
+  }
+  .lable_send_verification{
+    color: #000000;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .lable_verification_code{
+    color: #000000;
+    font-size: 16px;
+    font-weight: 500;
+    margin-left: 10%;
+    float: left;
+  }
+  .lable_forgetpassword {
+    color: #003452;
+    font-size: 16px;
+    font-weight: 500;
+    margin-left: 10%;
+    padding-top: 2%;
+    float: left;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+  }
+  .textBox{
+    width: 80%;
+    height: 35px;
+    background-color: transparent;
+    border-color: #3498DB;
+    border-radius: 3px;
+    border-width: 2px;
+  }
+  .button_submit {
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    height: 40px;
+    border: none;
+    border-radius: 3px;
+    width: 25%;
+    margin-top: 15px;
+  }
+  .lable_go_back{
+    color: #003452;
+    font-size: 16px;
+    font-weight: 500;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+  }
+}

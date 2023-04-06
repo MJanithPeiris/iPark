@@ -1,0 +1,11 @@
+<div class="form-body">
+    <div class="name-lable">
+        <label  for="name">{{isForDelete? "Are you sure you want to delete?": "Are you sure yo want to mark this as complete?"}}</label>
+    </div>
+      
+    <div class="modal-footer">
+        <button class="btn"  type="submit" value="Submit" (click)="isForDelete? deleteToDo(): completeToDo()">Yes</button>
+        <!-- <span style="padding-right: 15px;"></span> -->
+        <button type="button" class="btn no" (click)="cancel()">No</button>
+    </div>
+</div>

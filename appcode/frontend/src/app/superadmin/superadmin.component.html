@@ -1,0 +1,125 @@
+<app-side-nav-bar></app-side-nav-bar>
+
+    <div class="user_panal">
+        <div class= "user_bar">
+            <div class="company_search_bar">
+                <form>
+                    <div class="col-xs-3 col-sm-auto">
+                        <input id="user-table-filtering-search" 
+                        class="form-control search" 
+                        type="text" [formControl]="companyfilter"
+                        (input)="onSearchChang(companyfilter.value)" 
+                        placeholder="Search"/>
+                    </div>
+                </form>
+            </div>
+            <div class="button">
+                <button  class ="button_company_add" (click)="openForm(adduser, true)">+</button>
+            </div>
+        </div>
+        <div *ngFor="let user of displayUserList; let i = index">
+            <div class="user" [ngClass]="{'disable_color': !user.isActive, 'selected_color': selectedIndex==i}" (click)="select(); setId(i, user)">
+                <ngb-highlight class="name" [result]="user.name" [term]="companyfilter.value"></ngb-highlight>
+                <!-- <label class="checkbox">
+                    <input type="checkbox" [checked]="user.isActive" (click)="test(user)">
+                    <span class="checkmark"></span>
+                </label> -->
+            </div>
+        </div>
+    </div>
+    <div class="detail">
+        <div class="topdiv">
+            <label class="user_name">{{currentUser.name}}</label>
+            <img src="../../assets/images/threedots.png" class="button_option" placement="bottom" 
+            [ngbPopover]="popContent" (click)="setPopup(currentUser, true)">
+        </div>
+        
+        <div class = "parking_bar">
+            <div class="search_bar">
+                <form>
+                    <div class="col-xs-3 col-sm-auto">
+                        <input id="sub-user-table-filtering-search" 
+                        class="form-control search" 
+                        type="text" [formControl]="userfilter"
+                        (input)="onSearchChange(userfilter.value)" 
+                        placeholder="Search"/>
+                    </div>
+                </form>
+            </div>
+            <div class="button">
+                <button  class ="button_park_add" (click)="openForm(addsubuser,true)">+</button>
+            </div>
+        </div>
+        <table class="table table-striped" >
+            <thead>
+                <tr class="row_header">
+                    <th scope="col" class="header_cell col-sm-1"></th>
+                    <th scope="col" class="name_header_cell col-sm-2"><span class ="dash"></span><span>Name</span></th>
+                    <th scope="col" class="email_header_cell col-sm-2"><span class ="dash"></span><span>Email</span></th>
+                    <th scope="col" class="name_header_cell col-sm-2" ><span class ="dash"></span><span>Contact No</span></th>
+                    <th scope="col" class="rid_cell col-sm-1"><span class ="dash"></span><span >IsActive</span></th>
+                    <th scope="col" class="name_header_cell col-sm-2"><span class ="dash"></span><span >Location</span></th>
+                    <th scope="col" class="rid_cell col-sm-2"><span class ="dash"></span><span >Slot Count</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let subUser of subUserDisplayList; let i = index"  style="cursor: pointer;" >
+                    <td>
+                        <button type="button" class="edit_button " placement="bottom" 
+                        [ngbPopover]="popContent" (click)="setPopup(subUser, false ); setSubUser(subUser)">
+                            &#10247;
+                        </button>
+                    </td>
+                    <td><ngb-highlight class="space textlimit_start" [result]="subUser.name" [term]="userfilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.email" [term]="userfilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.contactNumber" [term]="userfilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.isActive.toString()" [term]="userfilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.location" [term]="userfilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.slotCount" [term]="userfilter.value"></ngb-highlight></td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <ng-template #popContent>
+        <div class="pop">
+            <div class="user_option_body">
+                <div class="option" (click)="isUser? edit(updateuser) : edit(updatesubuser)">Edit</div>
+                <div class="option" (click)="deleteUser(deleteuser)">Delete</div>
+                <div class="option">{{popupString}}</div>
+            </div>
+        </div>
+    </ng-template>
+
+    <!-- <ng-template #poContent>
+        <div class="pop">
+            <div class="subuser_option_body">
+                <div class="option" >Edit</div>
+                <div class="option" >Delete</div>
+                <div class="option"> Deactivate</div>
+            </div>
+        </div>
+    </ng-template> -->
+
+    <ng-template #adduser let-c="close" let-d="dismiss">
+        <app-add-or-update-user [isNewUser]="true" (isDone)="isUserAdded($event, true)"></app-add-or-update-user>
+    </ng-template>
+
+    <ng-template #updateuser let-c="close" let-d="dismiss">
+        <app-add-or-update-user [isNewUser]="false" [user]="currentUser" (isDone)="isUserAdded($event, false)"></app-add-or-update-user>
+    </ng-template>
+
+    <ng-template #addsubuser let-c="close" let-d="dismiss">
+        <app-add-or-update-sub-user [isNewSubUser]="true"></app-add-or-update-sub-user>
+    </ng-template>
+
+    <ng-template #updatesubuser let-c="close" let-d="dismiss">
+        <app-add-or-update-sub-user [isNewSubUser]="false" [subUser]="currentSubUser"></app-add-or-update-sub-user>
+    </ng-template>
+
+    <ng-template #deleteuser let-c="close" let-d="dismiss">
+        <app-dialog-box [isForDelete]="true" (isDone)="isToComplete($event)"></app-dialog-box>
+    </ng-template>
+
+    

@@ -1,0 +1,23 @@
+<div class="sidenav">
+    <div class="parking_slot" (click)="test('parking slot')" *ngIf="isParkingSlotVisible">
+        <img class="parking_slot_image" src="../../../assets/images/parkingslot.png">
+    </div>
+    
+    <div class="revenue" (click)="test('revenue')" *ngIf="isRevenueVisible">
+        <img class="revenue_image" src="../../../assets/images/revenue.png">
+    </div>
+    
+    <div class="user" (click)="test('user')"
+	placement="end"
+    [autoClose]="'outside'"
+	[ngbPopover]="signout">
+        <div class="ellipse"></div>
+        <img class="image" src="../../assets/images/user.png"/>
+    </div>
+</div>
+
+<ng-template #signout let-c="close" let-d="dismiss">
+    <div class="signout">
+
+    </div>
+</ng-template>

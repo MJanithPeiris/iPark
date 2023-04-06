@@ -1,0 +1,116 @@
+.sidenav {
+    height: 100%;
+    width:52px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #196F3D;
+    overflow-x: hidden;
+    padding-top: 15px;
+    text-align: center;
+
+    .parking_slot{
+        width: 45px;
+        height: 40px;
+        background-color: #D9D9D9;
+        display: inline-block;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .parking_slot_image{
+        width: 55px;
+        position: absolute;
+        object-fit: cover;
+        margin-left: -27.5px;
+        margin-top: 3.5px;
+        
+    }
+
+    .revenue{
+        width: 45px;
+        height: 40px;
+        background-color: #D9D9D9;
+        display: inline-block;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .revenue_image{
+        width: 42px;
+        position: absolute;
+        object-fit: cover;
+        margin-left: -21px;
+        margin-top: -4px;
+    }
+
+    .user{
+        width: 45px;
+        height: 45px;
+        border-radius: 23px;
+        background-color: #D9D9D9;
+        position:absolute;
+        bottom: 15px;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        vertical-align: middle;
+        cursor: pointer;
+
+        .ellipse {
+            background-color: #154360;
+            border-radius: 35px;
+            height: 35px;
+            width: 35px;
+            left: 3px;
+            position: absolute;
+            bottom: 5px;
+            left: -4px;
+            right: 0;
+            margin: 0 auto;
+          }
+          .image {
+            height: 40px;
+            width: 40px;
+            position: absolute;
+          
+          bottom: 2.5px;
+          left: 0;
+          right: 0;
+          margin: 0 auto;
+          }
+    }
+    .profile_image{
+        left: 50%;
+        margin: -85px 0 0 -40px;
+        vertical-align: middle; 
+    }
+}
+
+.signout{
+    background-color: #5499C7;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    border-radius: 7px;
+}
+
+:host ::ng-deep .popover {
+    background: transparent !important;
+    position: inherit !important;
+    --bs-popover-body-padding-x: 0;
+    --bs-popover-body-padding-y: 0;
+// --bs-popover-arrow-border: rgb(1, 26, 59);
+}
+
+:host ::ng-deep .popover-arrow:after{
+    border-right-color:#5499C7!important;
+    border-color: transparent;
+}
+
+:host::ng-deep .dx-popover-arrow::after {
+    background: transparent !important;
+}   
+
+//   :host::ng-deep .popover-arrow{
+//     transform: translate3d(0px, 47.1111px, 0px) !important;
+//   }
