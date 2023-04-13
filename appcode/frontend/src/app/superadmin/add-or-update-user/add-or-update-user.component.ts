@@ -18,13 +18,14 @@ export class AddOrUpdateUserComponent implements OnInit {
   formHeading! : string;
   buttonText!: string;
   userForm! : FormGroup;
+  userRoles!: string[];
  
   @Input() isNewUser! : boolean;
   @Input() user! : User;
 
   @Output() isDone = new EventEmitter();
 
-  constructor(private _modalService: NgbModal,private fb: FormBuilder,) { }
+  constructor(private _modalService: NgbModal,private fb: FormBuilder) { }
   
   ngOnInit(): void {
     this.userForm = this.fb.group({
@@ -43,10 +44,9 @@ export class AddOrUpdateUserComponent implements OnInit {
         Validators.minLength(1),
         Validators.maxLength(10)
       ]],
-      userRole: ['', [
+      userRole: ['Select', [
         Validators.required,
-        Validators.minLength(1),
-        Validators.maxLength(10)
+        this.notEqualValidator('Select')
       ]],
       password: ['', [
         Validators.required,
@@ -74,6 +74,8 @@ export class AddOrUpdateUserComponent implements OnInit {
       })
     }
     
+    this.userRoles = ["SuperAdmin", "Company"];
+
   }
 
   get name() {
@@ -95,6 +97,13 @@ export class AddOrUpdateUserComponent implements OnInit {
   }
   get confirmPassword(){
     return this.userForm.get('confirmPassword')!;
+  }
+
+  notEqualValidator(notEqualValue: any) {
+    return (control: { value: any }) => {
+      const isValid = control.value !== notEqualValue;
+      return isValid ? null : { notEqual: { value: control.value } };
+    };
   }
 
   closeForm(){

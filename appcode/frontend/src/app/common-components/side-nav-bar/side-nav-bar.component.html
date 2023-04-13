@@ -1,23 +1,31 @@
 <div class="sidenav">
-    <div class="parking_slot" (click)="test('parking slot')" *ngIf="isParkingSlotVisible">
+    <div class="parking_slot" *ngIf="isParkingSlotVisible" (click)="navigate('slot')">
         <img class="parking_slot_image" src="../../../assets/images/parkingslot.png">
     </div>
     
-    <div class="revenue" (click)="test('revenue')" *ngIf="isRevenueVisible">
+    <div class="revenue" *ngIf="isRevenueVisible" (click)="navigate('revenue')">
         <img class="revenue_image" src="../../../assets/images/revenue.png">
     </div>
     
-    <div class="user" (click)="test('user')"
-	placement="end"
+    <div class="user" 
+	placement="top"
     [autoClose]="'outside'"
-	[ngbPopover]="signout">
+	[ngbPopover]="signoutpopover">
         <div class="ellipse"></div>
         <img class="image" src="../../assets/images/user.png"/>
     </div>
 </div>
 
-<ng-template #signout let-c="close" let-d="dismiss">
+<ng-template #signoutpopover>
     <div class="signout">
+        <div class="user_logo" >
+            <!-- <div class="ellipse"></div> -->
+            <img class="image" src="../../assets/images/user.png"/>
+        </div>
+        <label class="label_username">Name: {{userName}}</label>
+        <label class="label_username">Email: {{email}}</label>
+        <div class="line"></div>
+        <div class="label_signout" (click)="signout()">Sign out</div>
 
     </div>
 </ng-template>

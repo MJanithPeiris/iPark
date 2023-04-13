@@ -1,5 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Options } from '@popperjs/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-side-nav-bar',
@@ -12,10 +12,15 @@ export class SideNavBarComponent implements OnInit {
   @Input() isCompany : boolean = false;
   @Input() isParking : boolean = false;
 
+  userName!: string;
+  email!: string | null;
+
+  @Output() isNavigate = new EventEmitter();
+
   isParkingSlotVisible : boolean = true;
   isRevenueVisible : boolean = true;
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     if(this.isSuperAdmin && !this.isCompany && !this.isParking){
@@ -30,9 +35,28 @@ export class SideNavBarComponent implements OnInit {
       this.isParkingSlotVisible = true;
       this.isRevenueVisible = true;
     }
+
+    if(localStorage.getItem('email') != null){
+      this.email = localStorage.getItem('email');
+    }
       
   }
-  test(s : string){
+
+  navigate(s : string): void{
+    if(this.isParking && s == 'slot'){
+      this.router.navigate(['parking/','slots']);
+      this.isNavigate.emit(false);
+    }
+    else if(this.isCompany && s =='revenue'){
+      this.router.navigate(['company/','revenue']);
+      this.isNavigate.emit(false);
+    }
     console.log(s);
+    console.log(this.isCompany);
+  }
+
+  signout(): void{
+    localStorage.removeItem('email');
+    this.router.navigate(['login']);
   }
 }

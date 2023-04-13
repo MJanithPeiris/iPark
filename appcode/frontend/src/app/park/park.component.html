@@ -1,0 +1,18 @@
+<app-side-nav-bar [isParking]="true"></app-side-nav-bar>
+
+<div class="main">
+    <div class="button_park" (click)="openForm(parkvehicle)">Park</div>
+    <div class="button_takeover" (click)="openForm(takeovervehicle)">Take Over</div>
+    
+</div>
+<router-outlet></router-outlet>
+
+<!-- <button style="margin-left: 100px; background-color: red;" (click)="test()" >test</button> -->
+
+<ng-template #parkvehicle let-c="close" let-d="dismiss">
+    <app-manage-vehicle [isNewVehicle]="true"></app-manage-vehicle>
+</ng-template>
+
+<ng-template #takeovervehicle let-c="close" let-d="dismiss">
+    <app-manage-vehicle [isNewVehicle]="false"></app-manage-vehicle>
+</ng-template>

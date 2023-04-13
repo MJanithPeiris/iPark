@@ -1,6 +1,6 @@
 <div style="height: 100%; width: 100%;">
     <div class="col-8" style="float: left;">
-      <form class="form_login" *ngIf="isLogin">
+      <form class="form_login" *ngIf="isLogin" [formGroup]="loginForm">
         <div class="lable_welcome">WELCOME</div>
         <div class="profile_image">
           <div class="ellipse"></div>
@@ -8,11 +8,11 @@
         </div>
         
         <label class="lable_email">Email</label>
-        <input type="text" class="textBox">
+        <input type="text" class="textBox" formControlName="email" required />
         <label class="lable_password">Password</label>
-        <input type="password" class="textBox">
+        <input type="password" class="textBox" formControlName="password" required />
         <label class="lable_forgetpassword" (click)="changeIsLogging(false)"><u>Forget password</u></label>
-        <button class="button_submit">Sign in</button>        
+        <button class="button_submit" (click)="login()">Sign in</button>        
       </form>
 
       <form class="form_forget_password" *ngIf="!isLogin && !isVerified">

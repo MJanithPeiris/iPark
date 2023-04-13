@@ -8,11 +8,19 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class DialogBoxComponent implements OnInit {
 
-  @Input() isForDelete! : boolean
+  @Input() isForDelete! : boolean;
+  @Input() status! : boolean;
   @Output() isDone = new EventEmitter();
+
+  activateStatus! : string;
   
   constructor(private _modalService: NgbModal) { }
   ngOnInit(): void {
+    if(this.status){
+      this.activateStatus = 'deactivate';
+    }else{
+      this.activateStatus = 'activate';
+    }
   }
 
   deleteToDo(){

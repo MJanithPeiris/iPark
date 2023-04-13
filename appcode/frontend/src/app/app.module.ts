@@ -6,33 +6,33 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { LoginComponent } from './login/login.component';
 import { AppRoutingModule } from './app-routing.module';
 import { SuperadminComponent } from './superadmin/superadmin.component';
-import { CompanyComponent } from './company/company.component';
-import { SideNavBarComponent } from './common-components/side-nav-bar/side-nav-bar.component';
 import { ParkModule } from './park/park.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AddOrUpdateUserComponent } from './superadmin/add-or-update-user/add-or-update-user.component';
 import { AddOrUpdateSubUserComponent } from './superadmin/add-or-update-sub-user/add-or-update-sub-user.component';
-import { DialogBoxComponent } from './common-components/dialog-box/dialog-box.component';
 import { ToastrModule } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
+import { CommonComponentsModule } from './common-components/common-components.module';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { CompanyRevenueComponent } from './company/company-revenue/company-revenue.component';
+import { CompanyModule } from './company/company.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     SuperadminComponent,
-    CompanyComponent,
-    SideNavBarComponent,
     AddOrUpdateUserComponent,
-    AddOrUpdateSubUserComponent,
-    DialogBoxComponent
+    CompanyRevenueComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NgbModule,
+    CommonComponentsModule,
     ParkModule,
+    CompanyModule,
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
@@ -53,6 +53,7 @@ import { CommonModule } from '@angular/common';
 
     }),
     CommonModule,
+    NgSelectModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

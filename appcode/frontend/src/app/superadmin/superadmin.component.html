@@ -1,4 +1,4 @@
-<app-side-nav-bar></app-side-nav-bar>
+<app-side-nav-bar [isSuperAdmin]="true"></app-side-nav-bar>
 
     <div class="user_panal">
         <div class= "user_bar">
@@ -18,8 +18,9 @@
             </div>
         </div>
         <div *ngFor="let user of displayUserList; let i = index">
-            <div class="user" [ngClass]="{'disable_color': !user.isActive, 'selected_color': selectedIndex==i}" (click)="select(); setId(i, user)">
+            <div class="user" [ngClass]="{'disable_color': !user.isActive, 'selected_color': userSelectedIndex==i}" (click)="select(); setId(i, user)">
                 <ngb-highlight class="name" [result]="user.name" [term]="companyfilter.value"></ngb-highlight>
+                <div class="super_user" *ngIf="isSuperAdmin(user.userRole)"></div>
                 <!-- <label class="checkbox">
                     <input type="checkbox" [checked]="user.isActive" (click)="test(user)">
                     <span class="checkmark"></span>
@@ -34,7 +35,7 @@
             [ngbPopover]="popContent" (click)="setPopup(currentUser, true)">
         </div>
         
-        <div class = "parking_bar">
+        <div class = "parking_bar" *ngIf="!isSuperAdmin(currentUser.userRole)">
             <div class="search_bar">
                 <form>
                     <div class="col-xs-3 col-sm-auto">
@@ -50,7 +51,7 @@
                 <button  class ="button_park_add" (click)="openForm(addsubuser,true)">+</button>
             </div>
         </div>
-        <table class="table table-striped" >
+        <table class="table table-striped" *ngIf="!isSuperAdmin(currentUser.userRole)">
             <thead>
                 <tr class="row_header">
                     <th scope="col" class="header_cell col-sm-1"></th>
@@ -62,11 +63,11 @@
                     <th scope="col" class="rid_cell col-sm-2"><span class ="dash"></span><span >Slot Count</span></th>
                 </tr>
             </thead>
-            <tbody>
-                <tr *ngFor="let subUser of subUserDisplayList; let i = index"  style="cursor: pointer;" >
+            <tbody *ngIf="subUserDisplayList.length > 0">
+                <tr *ngFor="let subUser of subUserDisplayList; let i = index"  style="cursor: pointer;" [ngClass]="{'table_disable_color': !subUser.isActive, 'table_selected_color': subUserSelectedIndex==i}" (click)="setSubUser(i,subUser)">
                     <td>
                         <button type="button" class="edit_button " placement="bottom" 
-                        [ngbPopover]="popContent" (click)="setPopup(subUser, false ); setSubUser(subUser)">
+                        [ngbPopover]="popContent" (click)="setPopup(subUser, false )">
                             &#10247;
                         </button>
                     </td>
@@ -79,7 +80,31 @@
                 </tr>
             </tbody>
         </table>
+        <div *ngIf="!isSuperAdmin(currentUser.userRole) && subUserDisplayList.length <= 0" style="height: 300px; width: 100%; text-align: center;"><h5 style="padding-top: 150px;">No Records Available</h5></div>
 
+        <div class="d-flex p-2" *ngIf="!isSuperAdmin(currentUser.userRole) && subUserDisplayList.length > 0">
+            <div class="start col-1">
+            </div>
+            <div class="col-1">
+                <ngb-pagination
+                [collectionSize]="collectionSize"
+                [(page)]="page"
+                [pageSize]="pageSize"
+                (pageChange)="refreshGrid()">
+                </ngb-pagination>
+            </div>
+            <div class="col-7"></div>
+        
+            <div class="item_count_lable col-2">Items per page</div>
+            <div class="col-1 select_option">
+                <select class="item_count_selector form-select " [(ngModel)]="pageSize" (ngModelChange)="refreshGrid()" title="items">
+                    <option [ngValue]="6">6</option>
+                    <option [ngValue]="8">8</option>
+                    <option [ngValue]="10">10</option>
+                    <option [ngValue]="20">20</option>
+                </select>
+               </div>
+        </div>
     </div>
 
     <ng-template #popContent>
@@ -87,7 +112,7 @@
             <div class="user_option_body">
                 <div class="option" (click)="isUser? edit(updateuser) : edit(updatesubuser)">Edit</div>
                 <div class="option" (click)="deleteUser(deleteuser)">Delete</div>
-                <div class="option">{{popupString}}</div>
+                <div class="option" (click)="changeActivateStatus(changeuser)">{{popupString}}</div>
             </div>
         </div>
     </ng-template>
@@ -122,4 +147,6 @@
         <app-dialog-box [isForDelete]="true" (isDone)="isToComplete($event)"></app-dialog-box>
     </ng-template>
 
-    
+    <ng-template #changeuser let-c="close" let-d="dismiss">
+        <app-dialog-box [isForDelete]="false" [status]="currentUser.isActive" (isDone)="changeUserActivateStatus($event)"></app-dialog-box>
+    </ng-template>

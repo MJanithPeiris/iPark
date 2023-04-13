@@ -39,7 +39,7 @@ export class AddOrUpdateSubUserComponent implements OnInit {
         Validators.minLength(1),
         Validators.maxLength(10)
       ]],
-      userRole: ['', [
+      userRole: ['Parking', [
         Validators.required,
         Validators.minLength(1),
         Validators.maxLength(10)
@@ -81,7 +81,6 @@ export class AddOrUpdateSubUserComponent implements OnInit {
         confirmPassword:''
       });
     }
-    
   }
 
   get name() {

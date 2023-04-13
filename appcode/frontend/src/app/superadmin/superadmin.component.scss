@@ -57,6 +57,25 @@
     background-color: #2E86C1 !important;
 }
 
+.table_disable_color{
+  // background-color: #E5E8E8 !important;
+  color: #7B7D7D  !important;
+  --bs-table-striped-color : #7B7D7D !important;
+}
+
+.table_selected_color{
+  background-color: #99A3A4 !important;
+}
+
+.super_user{
+    background-color: #154360 !important;
+    width: 10px;
+    height: 10px;
+    float: right;
+    margin-top: 8px;
+    margin-right: 10px;
+}
+
 .user{
     margin-left: 5%;
     background-color: #5499C7;
@@ -274,7 +293,7 @@
   //option
   .pop{
     .user_option_body{
-      height: 100px;
+      height: 102px;
       width: 100px;
       background-color: #1A5276;
       border-color: #3498DB !important;
@@ -316,3 +335,48 @@
   // :host ::ng-deep .popover-arrow{
   //   transform: translate3d(72px, 0px, 0px) !important;
   // }
+
+
+  .start{
+    width: 3.5%;
+  }
+  .item_count_lable{
+    text-align: right; 
+    padding-right: 10px; 
+    padding-top:6px; 
+    color:black;
+  }
+  
+  .item_count_selector{
+    width: auto; 
+    height: 36px; 
+    color: white;
+    background-color: #515A5A;
+    border-color: #515A5A;    
+  }
+  .item_count_selector:hover{
+    color: #99A3A4;
+  }
+
+  ngb-pagination ::ng-deep a {
+    color: white;
+    border-color: #515A5A;
+    background-color: #515A5A;
+  }
+  
+  ngb-pagination ::ng-deep .page-item.active .page-link {
+    border-color: #99A3A4;
+    background-color: #99A3A4;
+  }
+  
+  ngb-pagination ::ng-deep .pagination{
+    --bs-pagination-disabled-bg:#515A5A;
+    --bs-pagination-disabled-border-color:#515A5A;
+    --bs-pagination-hover-bg: #515A5A; 
+    --bs-pagination-hover-border-color:#515A5A;
+    --bs-pagination-disabled-color:#6c757d !important;
+    --bs-pagination-focus-bg: #515A5A;
+    --bs-pagination-hover-color :#99A3A4;
+    // --bs-pagination-focus-color:#99A3A4;
+    --bs-pagination-focus-box-shadow : 0 ;
+  }
