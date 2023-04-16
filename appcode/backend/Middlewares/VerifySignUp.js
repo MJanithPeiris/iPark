@@ -1,49 +1,46 @@
-const db = require("../Models/index")
-const ROLES = db.ROLES
-const User = require('../Models/User.Model')
-
+const db = require("../Models/index");
+const ROLES = db.ROLES;
+const User = require("../Models/User.Model");
 
 checkDuplicateUsername = (req, res, next) => {
-    // Username
-    User.findOne({
-        username: req.body.username
-    }).exec().then((err, user) => {
-        if (err) {
-            res.status(500).send({ message: err })
-            return
-        }
+  // Username
+  User.findOne({
+    email: req.body.email,
+  })
+    .exec()
+    .then((err, user) => {
+      if (err)
+        return res
+          .status(500)
+          .send({ response: false, message: "Internal Error Occurred", err });
 
-        if (user) {
-            res.status(400).send({ message: "Failed! Username is already in use!" })
-            return
-        }
+      if (user)
+        return res.status(400).send({
+          response: false,
+          message: "Failed! Email is already in use!",
+        });
 
-        next()
-
-    }).catch(err => {
-        res.status(500).send({ message: err })
-        return
-    })
-}
+      next();
+    });
+};
 
 checkRolesExisted = (req, res, next) => {
-    if (req.body.roles) {
-        for (let i = 0; i < req.body.roles.length; i++) {
-            if (!ROLES.includes(req.body.roles[i])) {
-                res.status(400).send({
-                    message: `Failed! Role ${req.body.roles[i]} does not exist!`
-                })
-                return
-            }
-        }
+  if (req.body.roles) {
+    for (let i = 0; i < req.body.roles.length; i++) {
+      if (!ROLES.includes(req.body.roles[i])) {
+        return res.status(400).send({
+          response: false,
+          message: `Failed! Role ${req.body.roles[i]} does not exist!`,
+        });
+      }
     }
-
-    next()
-}
+  }
+  next();
+};
 
 const verifySignUp = {
-    checkDuplicateUsername,
-    checkRolesExisted
-}
+  checkDuplicateUsername,
+  checkRolesExisted,
+};
 
-module.exports = verifySignUp
+module.exports = verifySignUp;

@@ -1,11 +1,10 @@
 const mongoose = require("mongoose");
-const AutoIncrement = require('mongoose-sequence')(mongoose);
+const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const User = mongoose.model(
   "User",
   new mongoose.Schema({
-    userId: {type: Number, unique: true,
-      index: true,},
+    userId: { type: Number, unique: true, index: true },
     name: String,
     email: String,
     password: String,
@@ -13,15 +12,20 @@ const User = mongoose.model(
     isActive: Boolean,
     isDeleted: Boolean,
     parentId: Number,
-    securityCode : Number,
+    securityCode: Number,
     userRole: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Role",
       },
     ],
-  })
-  .plugin(AutoIncrement, { inc_field: 'userId' })
+    parkingLot: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ParkingLot",
+      },
+    ],
+  }).plugin(AutoIncrement, { inc_field: "userId" })
 );
 
 module.exports = User;

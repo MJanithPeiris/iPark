@@ -58,9 +58,12 @@ function initial() {
 }
 
 require("./Routes/Auth.Route")(app);
+require("./Routes/User.Route")(app);
+require("./Routes/ParkingLot.Route")(app);
+require("./Routes/Revenue.Route")(app);
 
 app.get("/", (req, res) => {
-  res.status(200).send("Welcome to iPark server");
+  res.status(200).send("Welcome to iPark");
 });
 
 app.listen(4000, () => {

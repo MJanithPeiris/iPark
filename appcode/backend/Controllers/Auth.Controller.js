@@ -16,7 +16,9 @@ exports.signin = async (req, res) => {
       }
     : {};
   try {
-    const user = await User.findOne(condition).populate("userRole", "-__v");
+    const user = await User.findOne(condition)
+      .populate("userRole", "-__v")
+      .populate("parkingLot");
 
     if (!user) {
       return res.status(404).send({
@@ -57,6 +59,7 @@ exports.signin = async (req, res) => {
       isDeleted: user.isDeleted,
       userRole: authorities,
       parentId: user.parentId,
+      parkingLot: user.parkingLot[0],
       accessToken: token,
     });
   } catch (err) {
@@ -125,7 +128,13 @@ exports.forgetPassword = async (req, res) => {
         message: "Email not found: " + condition?.email,
       });
     }
-    if (!SendMail.sendMail(user.email, "Password reset code for iPark", "Your security code for reset password is: " + securityCode)) {
+    if (
+      !SendMail.sendMail(
+        user.email,
+        "Password reset code for iPark",
+        "Your security code for reset password is: " + securityCode
+      )
+    ) {
       return res.status(500).send({
         response: false,
         message: "Unable to send an email to: " + condition?.email,
@@ -133,7 +142,6 @@ exports.forgetPassword = async (req, res) => {
     }
 
     return res.status(200).send({ response: true, message: "Email sent" });
-    
   } catch (err) {
     return res.status(500).send({
       response: false,
