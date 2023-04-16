@@ -1,9 +1,7 @@
 const User = require("../Models/User.Model");
 var bcrypt = require("bcryptjs");
-const sendMail = require("../AdditionalService/SendMail");
-
-const ROLES = require("../Models/index").ROLES;
 const Role = require("../Models/Role.Model");
+const { Slot, ResponseModel } = require("../DataModels/DataModels");
 
 exports.addUser = (req, res) => {
   const user = new User({
@@ -17,26 +15,16 @@ exports.addUser = (req, res) => {
     securityCode: 0,
   });
 
-  //   const role = ROLES.find((_) => _ == req.userRole[0]);
-  //   if (!role)
-  //     return res
-  //       .status(400)
-  //       .send({ response: false, message: "Given user role is invalid!" });
-
   user.save((err, user) => {
     if (err)
       return res
         .status(500)
-        .send({ response: false, message: "Internal Error Occurred.", err });
+        .send(new ResponseModel(false, "Internal Error Occurred.", err ));
 
     if (req.body.userRole) {
       Role.find({ name: { $in: req.body.userRole } }, (err, roles) => {
         if (err) {
-          return res.status(500).send({
-            response: false,
-            message: "Internal Error Occurred.",
-            err,
-          });
+          return res.status(500).send(new ResponseModel(false, "Internal Error Occurred.", err ));
         }
         user.roles = roles.map((_) => _._id);
 
@@ -53,26 +41,15 @@ exports.addUser = (req, res) => {
           });
           parkingPlace.save((err, data) => {
             if (err) {
-              return res.status(500).send({
-                response: false,
-                message: "Internal Error Occurred.",
-                err,
-              });
+              return res.status(500).send(new ResponseModel(false, "Internal Error Occurred.", err ));
             }
             user.parkingLot = data._id;
 
             user.save((err) => {
               if (err) {
-                return res.status(500).send({
-                  response: false,
-                  message: "Internal Error Occurred.",
-                  err,
-                });
+                return res.status(500).send(new ResponseModel(false, "Internal Error Occurred.", err ));
               }
-              return res.status(201).send({
-                response: true,
-                message: "User added successfully!",
-              });
+              return res.status(201).send(new ResponseModel(true, "User added successfully!"));
             });
           });
         }
@@ -105,11 +82,7 @@ exports.getUsers = (req, res) => {
       res.status(200).send(users);
     })
     .catch((err) => {
-      res.status(500).send({
-        response: false,
-        message: "Some error occurred while retrieving the users.",
-        err,
-      });
+      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the users.", err ));
     });
 };
 
@@ -128,19 +101,12 @@ exports.getUserByUserId = (req, res) => {
     .populate("parkingLot")
     .then((data) => {
       if (!data) {
-        res.status(404).send({
-          response: false,
-          message: "Unable to find a user for given user id: " + userId + ".",
-        });
+        res.status(404).send(new ResponseModel(false, "Unable to find a user for given user id: " + userId + "." ));
       }
       res.status(200).send(data);
     })
     .catch((err) => {
-      res.status(500).send({
-        response: false,
-        message: "Some error occurred while retrieving the User.",
-        err,
-      });
+      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the User.", err ));
     });
 };
 
@@ -153,19 +119,14 @@ exports.deleteUser = (req, res) => {
   )
     .then((data) => {
       if (!data) {
-        res.status(404).send({
-          message: "Unable to find a user for given id: " + userId + ".",
-        });
+        res.status(404).send(new ResponseModel(false, "Unable to find a user for given user id: " + userId + "." ));
       } else
         res
           .status(200)
-          .send({ response: false, message: "User deleted successfully!" });
+          .send(new ResponseModel(true, "User deleted successfully!"));
     })
     .catch((err) => {
-      res.status(500).send({
-        message: "Some error occurred while retrieving the User.",
-        err,
-      });
+      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the User.", err ));
     });
 };
 
@@ -182,21 +143,14 @@ exports.updateUser = (req, res) => {
   })
     .then((data) => {
       if (!data) {
-        res.status(404).send({
-          response: false,
-          message: "Unable to find a user for given user id: " + userId + ".",
-        });
+        res.status(404).send(new ResponseModel(false, "Unable to find a user for given user id: " + userId + "." ));
       } else
         res
           .status(200)
-          .send({ response: false, message: "User updated successfully!" });
+          .send(new ResponseModel(true, "User updated successfully!"));
     })
     .catch((err) => {
-      res.status(500).send({
-        response: false,
-        message: "Some error occurred while retrieving the User.",
-        err,
-      });
+      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the User.", err ));
     });
 };
 
@@ -209,21 +163,14 @@ exports.activateUser = (req, res) => {
   )
     .then((data) => {
       if (!data) {
-        res.status(404).send({
-          response: false,
-          message: "Unable to find a user for given user id: " + userId + ".",
-        });
+        res.status(404).send(new ResponseModel(false, "Unable to find a user for given user id: " + userId + "." ));
       } else
         res
           .status(200)
-          .send({ response: false, message: "User activated successfully!" });
+          .send(new ResponseModel(true, "User activated successfully!"));
     })
     .catch((err) => {
-      res.status(500).send({
-        response: false,
-        message: "Some error occurred while retrieving the User.",
-        err,
-      });
+      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the User.", err ));
     });
 };
 
@@ -236,21 +183,14 @@ exports.deactivateUser = (req, res) => {
   )
     .then((data) => {
       if (!data) {
-        res.status(404).send({
-          response: false,
-          message: "Unable to find a user for given user id: " + userId + ".",
-        });
+        res.status(404).send(new ResponseModel(false, "Unable to find a user for given user id: " + userId + "." ));
       } else
         res
           .status(200)
-          .send({ response: false, message: "User deactivated successfully!" });
+          .send(new ResponseModel(true, "User deactivated successfully!"));
     })
     .catch((err) => {
-      res.status(500).send({
-        response: false,
-        message: "Some error occurred while retrieving the User.",
-        err,
-      });
+      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the User.", err ));
     });
 };
 
@@ -279,11 +219,7 @@ exports.getUsersByParentId = (req, res) => {
       res.status(200).send(users);
     })
     .catch((err) => {
-      res.status(500).send({
-        response: false,
-        message: "Some error occurred while retrieving the users.",
-        err,
-      });
+      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the Users.", err ));
     });
 };
 
