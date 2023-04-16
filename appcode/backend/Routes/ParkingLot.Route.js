@@ -1,5 +1,5 @@
 const { authJwt } = require("../Middlewares");
-const controller = require("../Controllers/ParkingPlace.Controller");
+const controller = require("../Controllers/ParkingLot.Controller");
 
 module.exports = function (app) {
   app.use(function (req, res, next) {

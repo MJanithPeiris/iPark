@@ -7,12 +7,11 @@ checkDuplicateUsername = (req, res, next) => {
   User.findOne({
     email: req.body.email,
   })
-    .exec()
-    .then((err, user) => {
-      if (err)
-        return res
-          .status(500)
-          .send({ response: false, message: "Internal Error Occurred", err });
+    .then((user) => {
+      // if (err)
+      //   return res
+      //     .status(500)
+      //     .send({ response: false, message: "Internal Error Occurred", err });
 
       if (user)
         return res.status(400).send({
@@ -21,6 +20,10 @@ checkDuplicateUsername = (req, res, next) => {
         });
 
       next();
+    }).catch((err) => {
+      return res
+          .status(500)
+          .send({ response: false, message: "Internal Error Occurred", err });
     });
 };
 

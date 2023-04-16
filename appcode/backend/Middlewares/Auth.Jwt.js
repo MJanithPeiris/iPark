@@ -17,13 +17,13 @@ verifyToken = (req, res, next) => {
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
       return res
-        .status(401)
+        .status(500)
         .send({ response: false, message: "Unauthorized!" });
     }
 
     BlackList.find({ token: token })
       .then((data) => {
-        if (data)
+        if (data.length != 0)
           return res
             .status(401)
             .send({ response: false, message: "Unauthorized!" });
@@ -43,17 +43,23 @@ verifyToken = (req, res, next) => {
 
 isAuthorized = (roles) => {
   return (req, res, next) => {
-    console.log(req.userId);
-    User.findOne({ id: req.userId }).exec((err, user) => {
-      if (err) {
-        res.status(500).send({ response: false, message: "Internal Error Occurred", err });
-        return;
-      }
-
-      Role.find({_id: { $in: user.roles },},
-        (err, userRoles) => {
+    User.find({ _id: req.userId })
+      .populate("userRole")
+      .exec((err, user) => {
+        if (err) {
+          return res
+            .status(500)
+            .send({ response: false, message: "Internal Error Occurred", err });
+        }
+        Role.find({ _id: { $in: user[0]?.userRole } }, (err, userRoles) => {
           if (err) {
-            res.status(500).send({ response: false, message: "Internal Error Occurred", err });
+            res
+              .status(500)
+              .send({
+                response: false,
+                message: "Internal Error Occurred",
+                err,
+              });
             return;
           }
 
@@ -66,11 +72,13 @@ isAuthorized = (roles) => {
 
           res
             .status(403)
-            .send({ response: false, message: "Require " + roles.join(" or ") + " role(s)!" });
+            .send({
+              response: false,
+              message: "Require " + roles.join(" or ") + " role(s)!",
+            });
           return;
-        }
-      );
-    });
+        });
+      });
   };
 };
 

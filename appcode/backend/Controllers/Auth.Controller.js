@@ -47,7 +47,7 @@ exports.signin = async (req, res) => {
       expiresIn: 64800, // 18 hours
     });
 
-    const authorities = user.roles.map(
+    const authorities = user.userRole.map(
       (role) => `ROLE_${role.name.toUpperCase()}`
     );
 
@@ -125,22 +125,22 @@ exports.forgetPassword = async (req, res) => {
         .status(404)
         .send(new ResponseModel(false, "Email not found: " + condition?.email));
     }
-    if (
-      !SendMail.sendMail(
+    // if (
+      SendMail.sendMail(
         user.email,
         "Password reset code for iPark",
         "Your security code for reset password is: " + securityCode
-      )
-    ) {
-      return res
-        .status(500)
-        .send(
-          new ResponseModel(
-            false,
-            "Unable to send an email to: " + condition?.email
-          )
-        );
-    }
+      );
+    // ) {
+      // return res
+      //   .status(500)
+      //   .send(
+      //     new ResponseModel(
+      //       false,
+      //       "Unable to send an email to: " + condition?.email
+      //     )
+      //   );
+    // }
 
     return res
       .status(200)

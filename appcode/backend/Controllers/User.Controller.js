@@ -1,61 +1,65 @@
 const User = require("../Models/User.Model");
 var bcrypt = require("bcryptjs");
 const Role = require("../Models/Role.Model");
+const ParkingLot = require("../Models/ParkingLot.Model");
 const { Slot, ResponseModel } = require("../DataModels/DataModels");
+const SendMail = require("../SupportService/SendMail");
 
-exports.addUser = (req, res) => {
-  const user = new User({
-    name: req.body.name,
-    email: req.body.email,
-    contactNumber: req.body.contactNumber,
-    isActive: req.body.isActive,
-    isDeleted: req.body.isDeleted,
-    password: bcrypt.hashSync(req.body.password, 8),
-    parentId: req.body.parentId ? req.body.parentId : 0,
-    securityCode: 0,
-  });
+exports.addUser = async (req, res) => {
+  try {
+    const user = new User({
+      name: req.body.name,
+      email: req.body.email,
+      contactNumber: req.body.contactNumber,
+      isActive: true,
+      isDeleted: false,
+      password: bcrypt.hashSync(req.body.password, 8),
+      parentId: req.body.parentId ? req.body.parentId : 0,
+      securityCode: 0,
+    });
 
-  user.save((err, user) => {
-    if (err)
-      return res
-        .status(500)
-        .send(new ResponseModel(false, "Internal Error Occurred.", err ));
+    const addedUser = await user.save();
+
+    if (req.body.parkingLot) {
+      let slotInfos = [];
+      for (let i = 1; i <= req.body.parkingLot.slotCount; i++) {
+        slotInfos.push(new Slot(i, false, "", "", "", null, 0));
+      }
+      const parkingLot = new ParkingLot({
+        userId: addedUser.userId,
+        slotCount: req.body.parkingLot.slotCount,
+        location: req.body.parkingLot.location,
+        slotInfo: slotInfos,
+      });
+      const parking = await parkingLot.save();
+      addedUser.parkingLot = parking._id;
+      await addedUser.save();
+    }
 
     if (req.body.userRole) {
-      Role.find({ name: { $in: req.body.userRole } }, (err, roles) => {
-        if (err) {
-          return res.status(500).send(new ResponseModel(false, "Internal Error Occurred.", err ));
-        }
-        user.roles = roles.map((_) => _._id);
-
-        if (req.body.parkingLot) {
-          let slotInfos = [];
-          for (let i = 1; i <= req.body.parkingLot.slotCount; i++) {
-            slotInfos.push(new Slot(i, false, "", "", "", null, 0));
-          }
-          const parkingPlace = new ParkingPlace({
-            userId: user.userId,
-            slotCount: req.body.parkingLot.slotCount,
-            location: req.body.parkingLot.location,
-            slotInfo: slotInfos,
-          });
-          parkingPlace.save((err, data) => {
-            if (err) {
-              return res.status(500).send(new ResponseModel(false, "Internal Error Occurred.", err ));
-            }
-            user.parkingLot = data._id;
-
-            user.save((err) => {
-              if (err) {
-                return res.status(500).send(new ResponseModel(false, "Internal Error Occurred.", err ));
-              }
-              return res.status(201).send(new ResponseModel(true, "User added successfully!"));
-            });
-          });
-        }
-      });
+      const roles = await Role.find({ name: { $in: req.body.userRole } });
+      addedUser.userRole = roles.map((role) => role._id);
+      await addedUser.save();
+      SendMail.sendMail(
+        user.email,
+        "Welcome to iPark",
+        "Login credentials for iPark:\n Email: " +
+          user.email +
+          "\n Password: " +
+          req.body.password +
+          "\n\n Thank you for joining with iPark!"
+      );
     }
-  });
+
+    return res
+      .status(201)
+      .send(new ResponseModel(true, "User added successfully!", addedUser));
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .send(new ResponseModel(false, "Internal Error Occurred.", err));
+  }
 };
 
 exports.getUsers = (req, res) => {
@@ -74,21 +78,28 @@ exports.getUsers = (req, res) => {
           isActive: item.isActive,
           isDeleted: item.isDeleted,
           parentId: item.parentId,
-          userRole: item.roles[0].name,
-          parkingLot: user.parkingLot[0],
+          userRole: item.userRole[0]?.name,
+          parkingLot: item.parkingLot[0] ? item.parkingLot[0] : [],
         };
         users.push(user);
       });
-      res.status(200).send(users);
+      return res.status(200).send(users);
     })
     .catch((err) => {
-      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the users.", err ));
+      return res
+        .status(500)
+        .send(
+          new ResponseModel(
+            false,
+            "Some error occurred while retrieving the users.",
+            err
+          )
+        );
     });
 };
 
 exports.getUserByUserId = (req, res) => {
   const userId = req.params.userid;
-  console.log(req.query);
   const condition = userId
     ? {
         userId: userId,
@@ -101,12 +112,39 @@ exports.getUserByUserId = (req, res) => {
     .populate("parkingLot")
     .then((data) => {
       if (!data) {
-        res.status(404).send(new ResponseModel(false, "Unable to find a user for given user id: " + userId + "." ));
+        return res
+          .status(404)
+          .send(
+            new ResponseModel(
+              false,
+              "Unable to find a user for given user id: " + userId + "."
+            )
+          );
       }
-      res.status(200).send(data);
+
+      const user = {
+        userId: data[0].userId,
+        name: data[0].name,
+        email: data[0].email,
+        contactNumber: data[0].contactNumber,
+        isActive: data[0].isActive,
+        isDeleted: data[0].isDeleted,
+        parentId: data[0].parentId,
+        userRole: data[0].userRole[0]?.name,
+        parkingLot: data[0].parkingLot[0] ? data[0].parkingLot[0] : [],
+      };
+      return res.status(200).send(user);
     })
     .catch((err) => {
-      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the User.", err ));
+      return res
+        .status(500)
+        .send(
+          new ResponseModel(
+            false,
+            "Some error occurred while retrieving the User.",
+            err
+          )
+        );
     });
 };
 
@@ -119,43 +157,84 @@ exports.deleteUser = (req, res) => {
   )
     .then((data) => {
       if (!data) {
-        res.status(404).send(new ResponseModel(false, "Unable to find a user for given user id: " + userId + "." ));
+        res
+          .status(404)
+          .send(
+            new ResponseModel(
+              false,
+              "Unable to find a user for given user id: " + userId + "."
+            )
+          );
       } else
         res
           .status(200)
-          .send(new ResponseModel(true, "User deleted successfully!"));
+          .send(new ResponseModel(true, "User deleted successfully!", data));
     })
     .catch((err) => {
-      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the User.", err ));
+      res
+        .status(500)
+        .send(
+          new ResponseModel(
+            false,
+            "Some error occurred while retrieving the User.",
+            err
+          )
+        );
     });
 };
 
 exports.updateUser = (req, res) => {
   const userId = req.body.userId;
-  const user = new User({
-    name: req.body.name,
-    email: req.body.email,
-    contactNumber: req.body.contactNumber,
-  });
+  const condition = userId
+    ? {
+        userId: userId,
+        isDeleted: false,
+      }
+    : {};
 
-  User.findOneAndUpdate({ userId: userId, isDeleted: false }, user, {
-    useFindAndModify: false,
-  })
-    .then((data) => {
-      if (!data) {
-        res.status(404).send(new ResponseModel(false, "Unable to find a user for given user id: " + userId + "." ));
-      } else
-        res
-          .status(200)
-          .send(new ResponseModel(true, "User updated successfully!"));
-    })
-    .catch((err) => {
-      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the User.", err ));
+  User.findOne(condition)
+    .populate("userRole")
+    .populate("parkingLot")
+    .then((user) => {
+      if (!user) {
+        return res
+          .status(404)
+          .send(
+            new ResponseModel(
+              false,
+              "Unable to find a user for given user id: " + userId + "."
+            )
+          );
+      }
+
+      user.name = req.body.name
+      user.email = req.body.email
+      user.contactNumber = req.body.contactNumber
+
+      User.findOneAndUpdate(condition, user, { useFindAndModify: false })
+        .then((data) => {
+            return res
+              .status(200)
+              .send(
+                new ResponseModel(true, "User updated successfully!", data)
+              );
+        })
+        .catch((err) => {
+          return res
+            .status(500)
+            .send(
+              new ResponseModel(
+                false,
+                "Some error occurred while retrieving the User.",
+                err
+              )
+            );
+        });
     });
 };
 
 exports.activateUser = (req, res) => {
-  const userId = req.params.userId;
+  const userId = req.params.userid;
   User.findOneAndUpdate(
     { userId: userId, isDeleted: false },
     { $set: { isActive: true } },
@@ -163,19 +242,34 @@ exports.activateUser = (req, res) => {
   )
     .then((data) => {
       if (!data) {
-        res.status(404).send(new ResponseModel(false, "Unable to find a user for given user id: " + userId + "." ));
+        res
+          .status(404)
+          .send(
+            new ResponseModel(
+              false,
+              "Unable to find a user for given user id: " + userId + "."
+            )
+          );
       } else
         res
           .status(200)
-          .send(new ResponseModel(true, "User activated successfully!"));
+          .send(new ResponseModel(true, "User activated successfully!", data));
     })
     .catch((err) => {
-      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the User.", err ));
+      res
+        .status(500)
+        .send(
+          new ResponseModel(
+            false,
+            "Some error occurred while retrieving the User.",
+            err
+          )
+        );
     });
 };
 
 exports.deactivateUser = (req, res) => {
-  const userId = req.params.userId;
+  const userId = req.params.userid;
   User.findOneAndUpdate(
     { userId: userId, isDeleted: false },
     { $set: { isActive: false } },
@@ -183,14 +277,29 @@ exports.deactivateUser = (req, res) => {
   )
     .then((data) => {
       if (!data) {
-        res.status(404).send(new ResponseModel(false, "Unable to find a user for given user id: " + userId + "." ));
+        res
+          .status(404)
+          .send(
+            new ResponseModel(
+              false,
+              "Unable to find a user for given user id: " + userId + "."
+            )
+          );
       } else
         res
           .status(200)
-          .send(new ResponseModel(true, "User deactivated successfully!"));
+          .send(new ResponseModel(true, "User deactivated successfully!", data));
     })
     .catch((err) => {
-      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the User.", err ));
+      res
+        .status(500)
+        .send(
+          new ResponseModel(
+            false,
+            "Some error occurred while retrieving the User.",
+            err
+          )
+        );
     });
 };
 
@@ -211,15 +320,23 @@ exports.getUsersByParentId = (req, res) => {
           isActive: item.isActive,
           isDeleted: item.isDeleted,
           parentId: item.parentId,
-          userRole: item.roles[0].name,
-          parkingLot: user.parkingLot[0],
+          userRole: item.userRole[0]?.name,
+          parkingLot: item.parkingLot[0] ? item.parkingLot[0] : [],
         };
         users.push(user);
       });
       res.status(200).send(users);
     })
     .catch((err) => {
-      res.status(500).send(new ResponseModel(false, "Some error occurred while retrieving the Users.", err ));
+      res
+        .status(500)
+        .send(
+          new ResponseModel(
+            false,
+            "Some error occurred while retrieving the Users.",
+            err
+          )
+        );
     });
 };
 
