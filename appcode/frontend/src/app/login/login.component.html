@@ -1,44 +1,44 @@
 <div style="height: 100%; width: 100%;">
     <div class="col-8" style="float: left;">
       <form class="form_login" *ngIf="isLogin" [formGroup]="loginForm">
-        <div class="lable_welcome">WELCOME</div>
+        <div class="label_welcome">WELCOME</div>
         <div class="profile_image">
           <div class="ellipse"></div>
           <img class="image" src="../../assets/images/user.png"/>
         </div>
         
-        <label class="lable_email">Email</label>
+        <label class="label_email">Email</label>
         <input type="text" class="textBox" formControlName="email" required />
-        <label class="lable_password">Password</label>
+        <label class="label_password">Password</label>
         <input type="password" class="textBox" formControlName="password" required />
-        <label class="lable_forgetpassword" (click)="changeIsLogging(false)"><u>Forget password</u></label>
+        <label class="label_forgetpassword" (click)="changeIsLogging(false)"><u>Forget password</u></label>
         <button class="button_submit" (click)="login()">Sign in</button>        
       </form>
 
       <form class="form_forget_password" *ngIf="!isLogin && !isVerified">
-        <label class="lable_forget_password">Forget Password</label>
-        <label class="lable_info">Please enter the below details.</label>      
-        <label class="lable_email_address">Email Address</label>
+        <label class="label_forget_password">Forget Password</label>
+        <label class="label_info">Please enter the below details.</label>      
+        <label class="label_email_address">Email Address</label>
         <input type="text" class="textBox">
-        <label class="lable_send_verification" (click)="sendVerification()"><u>Send verification</u></label><br>
-        <label class="lable_verification_code">Enter Verification Code</label>
+        <label class="label_send_verification" (click)="sendVerification()"><u>Send verification</u></label><br>
+        <label class="label_verification_code">Enter Verification Code</label>
         <input type="text" class="textBox">
         <button class="button_submit" (click)="submit()">Next</button>
-        <label class="lable_go_back" (click)="changeIsLogging(true)"><u>Go back</u></label>        
+        <label class="label_go_back" (click)="changeIsLogging(true)"><u>Go back</u></label>        
       </form>
 
       <form class="form_reset_password" *ngIf="!isLogin && isVerified">
-        <label class="lable_forget_password">Reset Password</label>
-        <label class="lable_info">Please enter a new password.</label>      
-        <label class="lable_forgetpassword">New Password</label>
+        <label class="label_forget_password">Reset Password</label>
+        <label class="label_info">Please enter a new password.</label>      
+        <label class="label_forgetpassword">New Password</label>
         <input type="text" class="textBox">
-        <label class="lable_forgetpassword">Confirm Password</label>
+        <label class="label_forgetpassword">Confirm Password</label>
         <input type="text" class="textBox">
         <button class="button_submit">Reset</button>
       </form>
 
   </div>
   <div class='imageDiv col-4' >
-    <div class="lable_ipark">iPark</div>
+    <div class="label_ipark">iPark</div>
   </div>
 </div>

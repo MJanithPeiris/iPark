@@ -1,3 +1,5 @@
+import { ParkingLot } from "./ParkingSlot";
+
 export class User{
     id!: number;
     name!: string;
@@ -21,3 +23,18 @@ export class SubUser{
     // password!: string;
     parentId! : number;
   }
+
+export class ResponseModel{
+response!: boolean;
+  id!: string;
+  userId!: number;
+  name!: string;
+  email!: string;
+  contactNumber!: string;
+  isActive!: boolean;
+  isDeleted!: boolean;
+  userRole!: string[];
+  parentId!: number;
+  parkingLot!: ParkingLot;
+  accessToken!: string
+}

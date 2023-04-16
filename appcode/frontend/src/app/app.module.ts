@@ -17,6 +17,7 @@ import { CommonComponentsModule } from './common-components/common-components.mo
 import { NgSelectModule } from '@ng-select/ng-select';
 import { CompanyRevenueComponent } from './company/company-revenue/company-revenue.component';
 import { CompanyModule } from './company/company.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { CompanyModule } from './company/company.module';
     }),
     CommonModule,
     NgSelectModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthenticateService } from 'src/app/services/authenticate.service';
 
 @Component({
   selector: 'app-side-nav-bar',
@@ -12,7 +13,7 @@ export class SideNavBarComponent implements OnInit {
   @Input() isCompany : boolean = false;
   @Input() isParking : boolean = false;
 
-  userName!: string;
+  name!: string | null;
   email!: string | null;
 
   @Output() isNavigate = new EventEmitter();
@@ -20,7 +21,7 @@ export class SideNavBarComponent implements OnInit {
   isParkingSlotVisible : boolean = true;
   isRevenueVisible : boolean = true;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private _authenticateService: AuthenticateService,) { }
 
   ngOnInit(): void {
     if(this.isSuperAdmin && !this.isCompany && !this.isParking){
@@ -39,6 +40,9 @@ export class SideNavBarComponent implements OnInit {
     if(localStorage.getItem('email') != null){
       this.email = localStorage.getItem('email');
     }
+    if(localStorage.getItem('name') != null){
+      this.name = localStorage.getItem('name');
+    }
       
   }
 
@@ -56,7 +60,20 @@ export class SideNavBarComponent implements OnInit {
   }
 
   signout(): void{
-    localStorage.removeItem('email');
-    this.router.navigate(['login']);
+    this._authenticateService.signOut().subscribe(
+      (res) => {
+        console.log(res);
+        if (res.response) {
+          localStorage.removeItem('email');
+          localStorage.removeItem('name');
+          localStorage.removeItem('token');
+          this.router.navigate(['login']);
+        }
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+    
   }
 }
