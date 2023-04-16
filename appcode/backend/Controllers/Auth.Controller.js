@@ -6,6 +6,7 @@ const SendMail = require("../SupportService/SendMail");
 const RandomNumber = require("../SupportService/RandomNumber");
 const User = require("../Models/User.Model");
 const BlackList = require("../Models/BlackList.Model");
+const { ResponseModel } = require("../DataModels/DataModels");
 
 exports.signin = async (req, res) => {
   const condition = req.body
@@ -21,11 +22,14 @@ exports.signin = async (req, res) => {
       .populate("parkingLot");
 
     if (!user) {
-      return res.status(404).send({
-        response: false,
-        message:
-          "User Not found or User may be not active or User may be deleted",
-      });
+      return res
+        .status(404)
+        .send(
+          new ResponseModel(
+            false,
+            "User Not found or User may be not active or User may be deleted"
+          )
+        );
     }
 
     const isPasswordValid = bcrypt.compareSync(
@@ -34,10 +38,9 @@ exports.signin = async (req, res) => {
     );
 
     if (!isPasswordValid) {
-      return res.status(401).send({
-        response: false,
-        message: "Password is invalid!",
-      });
+      return res
+        .status(401)
+        .send(new ResponseModel(false, "Password is invalid!"));
     }
 
     const token = jwt.sign({ id: user.id }, config.secret, {
@@ -64,11 +67,9 @@ exports.signin = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).send({
-      response: false,
-      message: "Internal Error Occurred",
-      err,
-    });
+    return res
+      .status(500)
+      .send(new ResponseModel(false, "Internal Error Occurred.", err));
   }
 };
 
@@ -76,15 +77,13 @@ exports.signout = (req, res) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
   if (token == null)
-    return res
-      .status(401)
-      .send({ response: false, message: "No token provided!" });
+    return res.status(401).send(new ResponseModel(false, "No token provided!"));
 
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err)
       return res
         .status(401)
-        .send({ response: false, message: "Invalid token provided" });
+        .send(new ResponseModel(false, "Invalid token provided!"));
 
     const blackList = new BlackList({
       token: token,
@@ -93,11 +92,11 @@ exports.signout = (req, res) => {
       if (err)
         return res
           .status(500)
-          .send({ response: false, message: "Internal Error Occurred", err });
+          .send(new ResponseModel(false, "Internal Error Occurred.", err));
 
       return res
         .status(200)
-        .send({ response: true, message: "User sign out successfully!" });
+        .send(new ResponseModel(true, "User sign out successfully!"));
     });
   });
 };
@@ -114,19 +113,17 @@ exports.forgetPassword = async (req, res) => {
   try {
     const user = await User.findOne(condition).exec();
     if (!user) {
-      return res.status(404).send({
-        response: false,
-        message: "Invalid email provided",
-      });
+      return res
+        .status(404)
+        .send(new ResponseModel(false, "Invalid email provided!"));
     }
     const data = await User.findOneAndUpdate(condition, {
       $set: { securityCode: securityCode },
     });
     if (!data) {
-      return res.status(404).send({
-        response: false,
-        message: "Email not found: " + condition?.email,
-      });
+      return res
+        .status(404)
+        .send(new ResponseModel(false, "Email not found: " + condition?.email));
     }
     if (
       !SendMail.sendMail(
@@ -135,19 +132,23 @@ exports.forgetPassword = async (req, res) => {
         "Your security code for reset password is: " + securityCode
       )
     ) {
-      return res.status(500).send({
-        response: false,
-        message: "Unable to send an email to: " + condition?.email,
-      });
+      return res
+        .status(500)
+        .send(
+          new ResponseModel(
+            false,
+            "Unable to send an email to: " + condition?.email
+          )
+        );
     }
 
-    return res.status(200).send({ response: true, message: "Email sent" });
+    return res
+      .status(200)
+      .send(new ResponseModel(true, "Email sent successfully!"));
   } catch (err) {
-    return res.status(500).send({
-      response: false,
-      message: "Internal Error Occurred",
-      err,
-    });
+    return res
+      .status(500)
+      .send(new ResponseModel(false, "Internal Error Occurred.", err));
   }
 };
 
@@ -164,26 +165,23 @@ exports.isValidateSecurityCode = async (req, res) => {
   try {
     const user = await User.findOne(condition).exec();
     if (!user) {
-      return res.status(404).send({
-        response: false,
-        message: "Invalid email provided",
-      });
+      return res
+        .status(404)
+        .send(new ResponseModel(false, "Invalid email provided!"));
     }
     if (user.securityCode !== securityCode) {
-      return res.status(401).send({
-        response: false,
-        message: "Invalid security code provided",
-      });
+      return res
+        .status(401)
+        .send(new ResponseModel(false, "Invalid security code provided!"));
     }
-    return res.status(200).send({
-      response: true,
-      message: "Security code is valid",
-    });
+    return res
+      .status(200)
+      .send(new ResponseModel(true, "Security code is valid!"));
   } catch (err) {
     console.error(err);
     return res
       .status(500)
-      .send({ response: false, message: "Internal Error Occurred", err });
+      .send(new ResponseModel(false, "Internal Error Occurred.", err));
   }
 };
 
@@ -197,21 +195,17 @@ exports.resetPassword = (req, res) => {
   )
     .then((data) => {
       if (!data) {
-        res.status(404).send({
-          response: false,
-          message: "Email not found: " + email,
-        });
+        res
+          .status(404)
+          .send(new ResponseModel(false, "Email not found: " + email));
       } else
-        res.status(200).send({
-          response: true,
-          message: "Password updated successfully!",
-        });
+        res
+          .status(200)
+          .send(new ResponseModel(true, "Password updated successfully!"));
     })
     .catch((err) => {
-      res.status(500).send({
-        response: false,
-        message: "Unable to update the password",
-        err,
-      });
+      res
+        .status(500)
+        .send(new ResponseModel(false, "Unable to update the password!", err));
     });
 };
