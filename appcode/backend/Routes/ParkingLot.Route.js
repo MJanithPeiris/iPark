@@ -19,7 +19,7 @@ module.exports = function (app) {
   app.put(
     "/api/parkinglot",
     [authJwt.verifyToken, isAuthorized(["SuperAdmin", "Company"])],
-    controller.updateParkingPlace
+    controller.updateParkingSlot
   );
   app.patch(
     "/api/parkinglot/:userid/slotstatus",

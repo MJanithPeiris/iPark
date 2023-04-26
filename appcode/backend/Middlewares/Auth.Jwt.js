@@ -3,6 +3,7 @@ const config = require("../Config/Auth.Config");
 const User = require("../Models/User.Model");
 const Role = require("../Models/Role.Model");
 const BlackList = require("../Models/BlackList.Model");
+const { ResponseModel } = require("../DataModels/DataModels");
 
 verifyToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -11,14 +12,14 @@ verifyToken = (req, res, next) => {
   if (!token) {
     return res
       .status(403)
-      .send({ response: false, message: "No token provided!" });
+      .send(new ResponseModel(false, "No token provided!"));
   }
 
   jwt.verify(token, config.secret, (err, decoded) => {
     if (err) {
       return res
-        .status(500)
-        .send({ response: false, message: "Unauthorized!" });
+        .status(403)
+        .send(new ResponseModel(false, "Unauthorized!" ));
     }
 
     BlackList.find({ token: token })
@@ -26,17 +27,15 @@ verifyToken = (req, res, next) => {
         if (data.length != 0)
           return res
             .status(401)
-            .send({ response: false, message: "Unauthorized!" });
+            .send(new ResponseModel(false, "Unauthorized!" ));
 
         req.userId = decoded.id;
         next();
       })
       .catch((err) => {
-        res.status(500).send({
-          response: false,
-          message: "Some error occurred while authorizing.",
+        return res.status(500).send(new ResponseModel(false,"Some error occurred while authorizing.",
           err,
-        });
+        ));
       });
   });
 };
@@ -49,18 +48,13 @@ isAuthorized = (roles) => {
         if (err) {
           return res
             .status(500)
-            .send({ response: false, message: "Internal Error Occurred", err });
+            .send(new ResponseModel(false, "Internal Error Occurred", err ));
         }
         Role.find({ _id: { $in: user[0]?.userRole } }, (err, userRoles) => {
           if (err) {
-            res
+            return res
               .status(500)
-              .send({
-                response: false,
-                message: "Internal Error Occurred",
-                err,
-              });
-            return;
+              .send(new ResponseModel(false, "Internal Error Occurred", err ));
           }
 
           for (let i = 0; i < roles.length; i++) {
@@ -70,13 +64,11 @@ isAuthorized = (roles) => {
             }
           }
 
-          res
+          return res
             .status(403)
-            .send({
-              response: false,
-              message: "Require " + roles.join(" or ") + " role(s)!",
-            });
-          return;
+            .send(new ResponseModel(false,
+             "Require " + roles.join(" or ") + " role(s)!",
+            ));
         });
       });
   };

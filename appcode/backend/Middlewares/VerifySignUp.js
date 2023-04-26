@@ -1,9 +1,9 @@
 const db = require("../Models/index");
 const ROLES = db.ROLES;
 const User = require("../Models/User.Model");
+const { ResponseModel } = require("../DataModels/DataModels");
 
-checkDuplicateUsername = (req, res, next) => {
-  // Username
+checkDuplicateEmail = (req, res, next) => {
   User.findOne({
     email: req.body.email,
   })
@@ -14,16 +14,15 @@ checkDuplicateUsername = (req, res, next) => {
       //     .send({ response: false, message: "Internal Error Occurred", err });
 
       if (user)
-        return res.status(400).send({
-          response: false,
-          message: "Failed! Email is already in use!",
-        });
+        return res.status(400).send(new ResponseModel(false,
+           "Failed! Email is already in use!",
+        ));
 
       next();
     }).catch((err) => {
       return res
           .status(500)
-          .send({ response: false, message: "Internal Error Occurred", err });
+          .send(new ResponseModel(false, "Internal Error Occurred", err ));
     });
 };
 
@@ -31,10 +30,9 @@ checkRolesExisted = (req, res, next) => {
   if (req.body.roles) {
     for (let i = 0; i < req.body.roles.length; i++) {
       if (!ROLES.includes(req.body.roles[i])) {
-        return res.status(400).send({
-          response: false,
-          message: `Failed! Role ${req.body.roles[i]} does not exist!`,
-        });
+        return res.status(400).send(new ResponseModel( false,
+          `Failed! Role ${req.body.roles[i]} does not exist!`,
+        ));
       }
     }
   }
@@ -42,7 +40,7 @@ checkRolesExisted = (req, res, next) => {
 };
 
 const verifySignUp = {
-  checkDuplicateUsername,
+  checkDuplicateEmail,
   checkRolesExisted,
 };
 

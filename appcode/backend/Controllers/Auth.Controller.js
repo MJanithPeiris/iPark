@@ -51,8 +51,7 @@ exports.signin = async (req, res) => {
       (role) => `ROLE_${role.name.toUpperCase()}`
     );
 
-    return res.status(200).send({
-      response: true,
+    return res.status(200).send( new ResponseModel(true, "Login successful!", {
       id: user._id,
       userId: user.userId,
       name: user.name,
@@ -64,7 +63,9 @@ exports.signin = async (req, res) => {
       parentId: user.parentId,
       parkingLot: user.parkingLot[0],
       accessToken: token,
-    });
+    })
+      
+    );
   } catch (err) {
     console.error(err);
     return res
@@ -169,7 +170,7 @@ exports.isValidateSecurityCode = async (req, res) => {
         .status(404)
         .send(new ResponseModel(false, "Invalid email provided!"));
     }
-    if (user.securityCode !== securityCode) {
+    if (user.securityCode != securityCode) {
       return res
         .status(401)
         .send(new ResponseModel(false, "Invalid security code provided!"));
@@ -195,16 +196,16 @@ exports.resetPassword = (req, res) => {
   )
     .then((data) => {
       if (!data) {
-        res
+        return res
           .status(404)
           .send(new ResponseModel(false, "Email not found: " + email));
       } else
-        res
+      return res
           .status(200)
           .send(new ResponseModel(true, "Password updated successfully!"));
     })
     .catch((err) => {
-      res
+      return res
         .status(500)
         .send(new ResponseModel(false, "Unable to update the password!", err));
     });

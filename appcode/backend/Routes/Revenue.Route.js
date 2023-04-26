@@ -13,4 +13,5 @@ module.exports = function(app) {
 
     app.get("/api/revenue/:userid",[authJwt.verifyToken, isAuthorized(["Company", "Parking"])], controller.getRevenueInfo)
     app.post("/api/revenue",[authJwt.verifyToken, isAuthorized(["Parking"])], controller.addRevenue)
+    app.get("/api/revenue/company/:parentid",[authJwt.verifyToken, isAuthorized(["Company"])], controller.getRevenueByParentId)
 }

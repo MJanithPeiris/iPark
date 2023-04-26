@@ -1,6 +1,7 @@
 const User = require("../Models/User.Model");
 var bcrypt = require("bcryptjs");
 const Role = require("../Models/Role.Model");
+const s = require("../Controllers/ParkingLot.Controller");
 const ParkingLot = require("../Models/ParkingLot.Model");
 const { Slot, ResponseModel } = require("../DataModels/DataModels");
 const SendMail = require("../SupportService/SendMail");
@@ -62,30 +63,164 @@ exports.addUser = async (req, res) => {
   }
 };
 
-exports.getUsers = (req, res) => {
-  let user = {};
+exports.getUsers = async (req, res) => {
   let users = [];
-  User.find({ isDeleted: false })
-    .populate("userRole")
-    .populate("parkingLot")
-    .then((data) => {
-      data.forEach((item) => {
-        user = {
-          userId: item.userId,
-          name: item.name,
-          email: item.email,
-          contactNumber: item.contactNumber,
-          isActive: item.isActive,
-          isDeleted: item.isDeleted,
-          parentId: item.parentId,
-          userRole: item.userRole[0]?.name,
-          parkingLot: item.parkingLot[0] ? item.parkingLot[0] : [],
+
+  try {
+    const data = await User.find({ isDeleted: false })
+      .populate("userRole")
+      .populate("parkingLot");
+
+    for (const item of data) {
+      let subUsers = [];
+
+      if (item.userRole[0]?.name === "Company") {
+        const subData = await User.find({
+          parentId: item.userId,
+          isDeleted: false,
+        })
+          .populate("userRole")
+          .populate("parkingLot");
+
+        for (const subUser of subData) {
+          subUsers.push({
+            userId: subUser.userId,
+            name: subUser.name,
+            email: subUser.email,
+            contactNumber: subUser.contactNumber,
+            isActive: subUser.isActive,
+            isDeleted: subUser.isDeleted,
+            parentId: subUser.parentId,
+            userRole: subUser.userRole[0]?.name,
+            parkingLot: subUser.parkingLot[0] || [],
+          });
+        }
+      }
+
+      const user = {
+        userId: item.userId,
+        name: item.name,
+        email: item.email,
+        contactNumber: item.contactNumber,
+        isActive: item.isActive,
+        isDeleted: item.isDeleted,
+        parentId: item.parentId,
+        userRole: item.userRole[0]?.name,
+        parkingLot: item.parkingLot[0] || [],
+        subUsers: subUsers,
+      };
+
+      users.push(user);
+    }
+
+    return res.status(200).send(users);
+  } catch (err) {
+    return res
+      .status(500)
+      .send(
+        new ResponseModel(
+          false,
+          "Some error occurred while retrieving the users.",
+          err
+        )
+      );
+  }
+};
+
+exports.getUserByUserId = async (req, res) => {
+  const userId = req.params.userid;
+  const condition = userId
+    ? {
+        userId: userId,
+        isDeleted: false,
+      }
+    : {};
+
+  // User.find(condition)
+  //   .populate("userRole")
+  //   .populate("parkingLot")
+  //   .then((data) => {
+  //     if (!data) {
+  //       return res
+  //         .status(404)
+  //         .send(
+  //           new ResponseModel(
+  //             false,
+  //             "Unable to find a user for given user id: " + userId + "."
+  //           )
+  //         );
+  //     }
+
+  //     const user = {
+  //       userId: data[0].userId,
+  //       name: data[0].name,
+  //       email: data[0].email,
+  //       contactNumber: data[0].contactNumber,
+  //       isActive: data[0].isActive,
+  //       isDeleted: data[0].isDeleted,
+  //       parentId: data[0].parentId,
+  //       userRole: data[0].userRole[0]?.name,
+  //       parkingLot: data[0].parkingLot[0] ? data[0].parkingLot[0] : [],
+  //     };
+  //     return res.status(200).send(user);
+  //   })
+  //   .catch((err) => {
+  //     return res
+  //       .status(500)
+  //       .send(
+  //         new ResponseModel(
+  //           false,
+  //           "Some error occurred while retrieving the User.",
+  //           err
+  //         )
+  //       );
+  //   });
+
+    try {
+      const data = await User.findOne(condition)
+        .populate("userRole")
+        .populate("parkingLot");
+        
+        let subUsers = [];
+        if (data.userRole[0]?.name === "Company") {
+          const subData = await User.find({
+            parentId: data.userId,
+            isDeleted: false,
+          })
+            .populate("userRole")
+            .populate("parkingLot");
+  
+          for (const subUser of subData) {
+            subUsers.push({
+              userId: subUser.userId,
+              name: subUser.name,
+              email: subUser.email,
+              contactNumber: subUser.contactNumber,
+              isActive: subUser.isActive,
+              isDeleted: subUser.isDeleted,
+              parentId: subUser.parentId,
+              userRole: subUser.userRole[0]?.name,
+              parkingLot: subUser.parkingLot[0] || [],
+            });
+          }
+        }
+  
+        const user = {
+          userId: data.userId,
+          name: data.name,
+          email: data.email,
+          contactNumber: data.contactNumber,
+          isActive: data.isActive,
+          isDeleted: data.isDeleted,
+          parentId: data.parentId,
+          userRole: data.userRole[0]?.name,
+          parkingLot: data.parkingLot[0] || [],
+          subUsers: subUsers,
         };
-        users.push(user);
-      });
-      return res.status(200).send(users);
-    })
-    .catch((err) => {
+      
+      return res.status(200).send(user);
+
+    } catch (err) {
       return res
         .status(500)
         .send(
@@ -95,57 +230,7 @@ exports.getUsers = (req, res) => {
             err
           )
         );
-    });
-};
-
-exports.getUserByUserId = (req, res) => {
-  const userId = req.params.userid;
-  const condition = userId
-    ? {
-        userId: userId,
-        isDeleted: false,
-      }
-    : {};
-
-  User.find(condition)
-    .populate("userRole")
-    .populate("parkingLot")
-    .then((data) => {
-      if (!data) {
-        return res
-          .status(404)
-          .send(
-            new ResponseModel(
-              false,
-              "Unable to find a user for given user id: " + userId + "."
-            )
-          );
-      }
-
-      const user = {
-        userId: data[0].userId,
-        name: data[0].name,
-        email: data[0].email,
-        contactNumber: data[0].contactNumber,
-        isActive: data[0].isActive,
-        isDeleted: data[0].isDeleted,
-        parentId: data[0].parentId,
-        userRole: data[0].userRole[0]?.name,
-        parkingLot: data[0].parkingLot[0] ? data[0].parkingLot[0] : [],
-      };
-      return res.status(200).send(user);
-    })
-    .catch((err) => {
-      return res
-        .status(500)
-        .send(
-          new ResponseModel(
-            false,
-            "Some error occurred while retrieving the User.",
-            err
-          )
-        );
-    });
+    }
 };
 
 exports.deleteUser = (req, res) => {
@@ -206,18 +291,17 @@ exports.updateUser = (req, res) => {
             )
           );
       }
-
-      user.name = req.body.name
-      user.email = req.body.email
-      user.contactNumber = req.body.contactNumber
-
+      user.name = req.body.name;
+      user.email = req.body.email;
+      user.contactNumber = req.body.contactNumber;
+      if (req.body.parkingLot) {
+        s.updateParkingSlot(req, res);
+      }
       User.findOneAndUpdate(condition, user, { useFindAndModify: false })
         .then((data) => {
-            return res
-              .status(200)
-              .send(
-                new ResponseModel(true, "User updated successfully!", data)
-              );
+          return res
+            .status(200)
+            .send(new ResponseModel(true, "User updated successfully!", data));
         })
         .catch((err) => {
           return res
@@ -242,7 +326,7 @@ exports.activateUser = (req, res) => {
   )
     .then((data) => {
       if (!data) {
-        res
+        return res
           .status(404)
           .send(
             new ResponseModel(
@@ -251,12 +335,12 @@ exports.activateUser = (req, res) => {
             )
           );
       } else
-        res
+        return res
           .status(200)
           .send(new ResponseModel(true, "User activated successfully!", data));
     })
     .catch((err) => {
-      res
+      return res
         .status(500)
         .send(
           new ResponseModel(
@@ -277,7 +361,7 @@ exports.deactivateUser = (req, res) => {
   )
     .then((data) => {
       if (!data) {
-        res
+        return res
           .status(404)
           .send(
             new ResponseModel(
@@ -286,12 +370,14 @@ exports.deactivateUser = (req, res) => {
             )
           );
       } else
-        res
+        return res
           .status(200)
-          .send(new ResponseModel(true, "User deactivated successfully!", data));
+          .send(
+            new ResponseModel(true, "User deactivated successfully!", data)
+          );
     })
     .catch((err) => {
-      res
+      return res
         .status(500)
         .send(
           new ResponseModel(
@@ -325,10 +411,10 @@ exports.getUsersByParentId = (req, res) => {
         };
         users.push(user);
       });
-      res.status(200).send(users);
+      return res.status(200).send(users);
     })
     .catch((err) => {
-      res
+      return res
         .status(500)
         .send(
           new ResponseModel(
@@ -344,10 +430,10 @@ exports.findAllActive = (req, res) => {
   User.find({ _active: true })
     // .populate('roles')
     .then((data) => {
-      res.send(data);
+      return res.send(data);
     })
     .catch((err) => {
-      res.status(500).send({
+      return res.status(500).send({
         message: err.message || "Some error occurred while retrieving user.",
       });
     });

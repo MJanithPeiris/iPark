@@ -14,7 +14,7 @@ module.exports = function (app) {
   app.post(
     "/api/user",
     [
-      verifySignUp.checkDuplicateUsername,
+      // verifySignUp.checkDuplicateUsername,
       verifySignUp.checkRolesExisted,
       authJwt.verifyToken,
       authJwt.isAuthorized(["SuperAdmin", "Company"]),

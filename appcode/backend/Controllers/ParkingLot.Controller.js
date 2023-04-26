@@ -35,14 +35,14 @@ exports.getParkingInfo = async (req, res) => {
   }
 };
 
-exports.updateParkingPlace = async (req, res) => {
+exports.updateParkingSlot = async (req, res) => {
   const userId = req.body.userId;
 
   try {
     const parking = await findOne(userId, false);
 
     let slotInfos = [];
-    for (let i = 0; i < req.body.slotCount; ++i) {
+    for (let i = 0; i < req.body.parkingLot.slotCount; ++i) {
       if (i < parking.slotCount) {
         if (parking.slotInfo[i].status == true)
           slotInfos.push(
@@ -62,8 +62,8 @@ exports.updateParkingPlace = async (req, res) => {
 
     const parkingPlace = {
       userId: userId,
-      slotCount: req.body.slotCount,
-      location: req.body.location,
+      slotCount: req.body.parkingLot.slotCount,
+      location: req.body.parkingLot.location,
       slotInfo: slotInfos,
     };
 
@@ -80,7 +80,7 @@ exports.updateParkingPlace = async (req, res) => {
             )
           );
       }
-      return res.status(200).send(data);
+      // return res.status(200).send(new ResponseModel(true, 'Parking lot updated successfully!',data));
     });
   } catch (err) {
     return res
@@ -148,12 +148,21 @@ exports.updateParkingSlotStatus = async (req, res) => {
                 "Parking lot not found for user id: " + userId
               )
             );
-        } else res.send(true);
+        } else res.send(new ResponseModel(
+          true,
+          "Vehicle is parked successfully!! in slot: " + slot.id
+        ));
       })
       .catch((err) => {
-        res.status(500).send({
-          message: err,
-        });
+        return res
+      .status(500)
+      .send(
+        new ResponseModel(
+          false,
+          "Error occurred while retrieving parking lot info.",
+          err
+        )
+      );
       });
   } catch (err) {
     return res
