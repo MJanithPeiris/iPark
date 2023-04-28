@@ -1,0 +1,164 @@
+<app-side-nav-bar [isCompany]="true"></app-side-nav-bar>
+
+<div class="main">
+  <div class="header">
+    <h2>Parking Revenue</h2>
+    <button class="btn" (click)="goBack()">Back</button>
+  </div>
+  <div class="row">
+    <form class="row row-cols-sm-auto">
+      <div class="col-12 left_dtp">
+        <div class="dp-hidden position-absolute">
+          <div class="input-group ">
+            <input
+              name="datepicker"
+              class="form-control s"
+              ngbDatepicker
+              #datepicker="ngbDatepicker"
+              [autoClose]="'outside'"
+              (dateSelect)="onDateSelection($event)"
+              [displayMonths]="2"
+              [dayTemplate]="t"
+              outsideDays="hidden"
+              [startDate]="fromDate!"
+              tabindex="-1"
+            />
+            <ng-template #t let-date let-focused="focused">
+              <span
+                class="custom-day"
+                [class.focused]="focused"
+                [class.range]="isRange(date)"
+                [class.faded]="isHovered(date) || isInside(date)"
+                (mouseenter)="hoveredDate = date"
+                (mouseleave)="hoveredDate = null"
+              >
+                {{ date.day }}
+              </span>
+            </ng-template>
+          </div>
+        </div>
+        <div class="input-group">
+          <input
+            #dpFromDate
+            class="form-control left_input"
+            placeholder="yyyy-mm-dd"
+            name="dpFromDate"
+            [value]="formatter.format(fromDate)"
+            (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
+          />
+        </div>
+      </div>
+      <div class="col-12 right_dtp">
+        <div class="input-group">
+          <input
+            #dpToDate
+            class="form-control right_input"
+            placeholder="yyyy-mm-dd"
+            name="dpToDate"
+            [value]="formatter.format(toDate)"
+            (input)="toDate = validateInput(toDate, dpToDate.value)"
+          />
+          <button
+            class="btn btn-outline-secondary bi bi-calendar3"
+            (click)="datepicker.toggle()"
+            type="button"
+          >
+            <i class="fas fa-calendar-alt"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <button class="btn search_btn" (click)="loadData()"><i class="fas fa-search"></i> Search</button>
+  </div>
+
+  <div class="horizontal">
+    <table class="table table-striped">
+      <thead>
+        <tr class="row_header">
+          <th scope="col" class="name_header_cell col-sm-2">
+            <span class="dash"></span><span>Name</span>
+          </th>
+          <th scope="col" class="name_header_cell col-sm-2">
+            <span class="dash"></span><span>Contact No</span>
+          </th>
+          <th scope="col" class="rid_cell col-sm-1">
+            <span class="dash"></span><span>IsActive</span>
+          </th>
+          <th scope="col" class="name_header_cell col-sm-2">
+            <span class="dash"></span><span>Location</span>
+          </th>
+          <th scope="col" class="rid_cell col-sm-2">
+            <span class="dash"></span><span>Slot Count</span>
+          </th>
+          <th scope="col" class="rid_cell col-sm-3">
+            <span class="dash"></span><span>Revenue</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody *ngIf="subUserDisplayList?.length">
+        <tr
+          *ngFor="let subUser of subUserDisplayList; let i = index"
+          style="cursor: pointer"
+          [ngClass]="{
+            disable_color: !subUser.isActive,
+            selected_color: selectedIndex == i
+          }"
+          (click)="setId(i)"
+        >
+          <!-- <td>
+                        <button type="button" class="edit_button " placement="bottom" 
+                        [ngbPopover]="popContent" (click)="setPopup(subUser, false );">
+                            &#10247;
+                        </button>
+                    </td> -->
+          <td>
+            <ngb-highlight
+              class="space textlimit_start"
+              [result]="subUser.name"
+              [term]="userFilter.value"
+            ></ngb-highlight>
+          </td>
+          <td>
+            <ngb-highlight
+              class="space textlimit_name"
+              [result]="subUser.contactNumber"
+              [term]="userFilter.value"
+            ></ngb-highlight>
+          </td>
+          <td>
+            <ngb-highlight
+              class="space textlimit_name"
+              [result]="subUser.isActive.toString()"
+              [term]="userFilter.value"
+            ></ngb-highlight>
+          </td>
+          <td>
+            <ngb-highlight
+              class="space textlimit_name"
+              [result]="subUser.location"
+              [term]="userFilter.value"
+            ></ngb-highlight>
+          </td>
+          <td>
+            <ngb-highlight
+              class="space textlimit_name"
+              [result]="subUser.slotCount.toString()"
+              [term]="userFilter.value"
+            ></ngb-highlight>
+          </td>
+          <td>
+            <ngb-highlight
+              class="space textlimit_name"
+              [result]="subUser.totalRevenue.toString()"
+              [term]="userFilter.value"
+            ></ngb-highlight>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="!subUserDisplayList?.length" class="no_records">
+      <h5 style="padding-top: 150px">No Records Available</h5>
+    </div>
+  </div>
+</div>

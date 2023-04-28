@@ -1,0 +1,38 @@
+<div class="sidenav">
+    <div>
+        <img class="ipark" src="../../../assets/images/Group 4.jpg">
+    </div>
+
+    <div class="welcome_label">
+        
+        <h2>Welcome to iPark</h2>
+    </div>
+    <div class="parking_slot" *ngIf="isParkingSlotVisible" (click)="navigate('slot')">
+        <img class="parking_slot_image" src="../../../assets/images/parkingslot.png">
+    </div>
+    
+    <div class="revenue" *ngIf="isRevenueVisible" (click)="navigate('revenue')">
+        <img class="revenue_image" src="../../../assets/images/revenue.png">
+    </div>
+    
+    <div class="user" 
+	placement="bottom"
+    [autoClose]="'outside'"
+	[ngbPopover]="signoutpopover">
+        <div class="ellipse"></div>
+        <img class="image" src="../../assets/images/user.png"/>
+    </div>
+</div>
+
+<ng-template #signoutpopover>
+    <div class="signout">
+        <div class="user_logo" >
+            <!-- <div class="ellipse"></div> -->
+            <img class="image" src="../../assets/images/user.png"/>
+        </div>
+        <label class="label_username">Name: {{name}}</label>
+        <label class="label_username">Email: {{email}}</label>
+        <div class="line"></div>
+        <div class="label_signout" (click)="signout()">Sign out</div>
+    </div>
+</ng-template>

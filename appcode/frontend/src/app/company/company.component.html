@@ -1,0 +1,117 @@
+<app-side-nav-bar [isCompany]="true"></app-side-nav-bar>
+
+    
+    <div class="detail">
+        <div class="topdiv">
+            <label class="user_name">{{user?.name}}</label>
+            <!-- <img src="../../assets/images/threedots.png" class="button_option" placement="bottom" 
+            [ngbPopover]="popContent" (click)="setPopup(currentUser, true)"> -->
+        </div>
+        
+        <div class = "parking_bar">
+            <div class="search_bar">
+                <form>
+                    <div class="col-xs-3 col-sm-auto">
+                        <input id="sub-user-table-filtering-search" 
+                        class="form-control search" 
+                        type="text" [formControl]="userFilter"
+                        (input)="onSearchChange(userFilter.value)" 
+                        placeholder="Search"/>
+                    </div>
+                </form>
+            </div>
+            <div class="button">
+                <button  class ="button_park_add" (click)="openForm(addsubuser,true)">+</button>
+            </div>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr class="row_header">
+                    <th scope="col" class="header_cell col-sm-1"></th>
+                    <th scope="col" class="name_header_cell col-sm-2"><span class ="dash"></span><span>Name</span></th>
+                    <th scope="col" class="email_header_cell col-sm-2"><span class ="dash"></span><span>Email</span></th>
+                    <th scope="col" class="name_header_cell col-sm-2" ><span class ="dash"></span><span>Contact No</span></th>
+                    <th scope="col" class="rid_cell col-sm-1"><span class ="dash"></span><span >IsActive</span></th>
+                    <th scope="col" class="name_header_cell col-sm-2"><span class ="dash"></span><span >Location</span></th>
+                    <th scope="col" class="rid_cell col-sm-2"><span class ="dash"></span><span >Slot Count</span></th>
+                </tr>
+            </thead>
+            <tbody *ngIf="subUserDisplayList?.length">
+                <tr *ngFor="let subUser of subUserDisplayList; let i = index"  style="cursor: pointer;" [ngClass]="{'disable_color': !subUser.isActive, 'selected_color': selectedIndex==i}" (click)="select(); setId(i, subUser)" >
+                    <td>
+                        <button type="button" class="edit_button " placement="bottom" 
+                        [ngbPopover]="popContent" (click)="setPopup(subUser, false );">
+                            &#10247;
+                        </button>
+                    </td>
+                    <td><ngb-highlight class="space textlimit_start" [result]="subUser.name" [term]="userFilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.email" [term]="userFilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.contactNumber" [term]="userFilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.isActive.toString()" [term]="userFilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.parkingLot.location" [term]="userFilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.parkingLot.slotCount.toString()" [term]="userFilter.value"></ngb-highlight></td>
+                </tr>
+            </tbody>
+        </table>
+        <div *ngIf="!subUserDisplayList?.length" class="no_records"><h5 style="padding-top: 150px;">No Records Available</h5></div>
+
+        <div class="d-flex p-2">
+            <div class="start col-1">
+            </div>
+            <div class="col-1">
+                <ngb-pagination
+                [collectionSize]="collectionSize"
+                [(page)]="page"
+                [pageSize]="pageSize"
+                (pageChange)="refreshGrid()">
+                </ngb-pagination>
+            </div>
+            <div class="col-7"></div>
+        
+            <div class="item_count_lable col-2">Items per page</div>
+            <div class="col-1 select_option">
+                <select class="item_count_selector form-select " name="pageSize" [(ngModel)]="pageSize" (ngModelChange)="refreshGrid()" title="items">
+                    <option [ngValue]="6">6</option>
+                    <option [ngValue]="8">8</option>
+                    <option [ngValue]="10">10</option>
+                    <option [ngValue]="20">20</option>
+                </select>
+               </div>
+        </div>
+    </div>
+
+    <ng-template #popContent>
+        <div class="pop">
+            <div class="user_option_body">
+                <div class="option" (click)="edit(updatesubuser)">Edit</div>
+                <div class="option" (click)="isToDelete(deleteuser)">Delete</div>
+                <div class="option" (click)="changeActivateStatus(changeuser)">{{popupString}}</div>
+            </div>
+        </div>
+    </ng-template>
+
+    <!-- <ng-template #poContent>
+        <div class="pop">
+            <div class="subuser_option_body">
+                <div class="option" >Edit</div>
+                <div class="option" >Delete</div>
+                <div class="option"> Deactivate</div>
+            </div>
+        </div>
+    </ng-template> -->
+
+    <ng-template #addsubuser let-c="close" let-d="dismiss">
+        <app-add-or-update-sub-user [isNewSubUser]="true" [parentId]="user.userId" (isDone)="isCompleted($event)"></app-add-or-update-sub-user>
+    </ng-template>
+
+    <ng-template #updatesubuser let-c="close" let-d="dismiss">
+        <app-add-or-update-sub-user [isNewSubUser]="false" [subUser]="currentSubUser" (isDone)="isCompleted($event)"></app-add-or-update-sub-user>
+    </ng-template>
+
+    <ng-template #deleteuser let-c="close" let-d="dismiss">
+        <app-dialog-box [isForDelete]="true" (isDone)="deleteSubUser($event)"></app-dialog-box>
+    </ng-template>
+
+    <ng-template #changeuser let-c="close" let-d="dismiss">
+        <app-dialog-box [isForDelete]="false" [status]="currentSubUser.isActive" (isDone)="changeUserActivateStatus($event)"></app-dialog-box>
+    </ng-template>

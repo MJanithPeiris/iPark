@@ -1,0 +1,200 @@
+<form class="form_body" [formGroup]="vehicleForm">
+  <div class="modal-header">
+    <h5 class="modal-title" id="modal-basic-title">{{ formHeading }}</h5>
+  </div>
+  <div class="modal-body">
+    <!-- Vehicle Number -->
+    <div class="textfield">
+      <label class="name_lable required" for="vehicleNumber"
+        >Vehicle Number</label
+      >
+      <label
+        *ngIf="onlyView"
+        class="label_text_box"
+        type="text"
+        id="vehicleNumber"
+        name="vehicleNumber"
+        >{{ vehicleForm.value.vehicleNumber }}</label
+      >
+      <input
+      *ngIf="!onlyView"
+        class="text_box"
+        [ngClass]="{'enable_error': vehicleNumber.errors?.['required'] || vehicleNumber.errors?.['maxlength']}"
+        type="text"
+        id="vehicleNumber"
+        name="vehicleNumber"
+        formControlName="vehicleNumber"
+        required
+      />
+      <button type="submit" class="search_button" *ngIf="!isNewVehicle && !onlyView" (click)="search()"><i class="fas fa-search"></i></button>
+
+      <div class="error_message_div">
+        <label class="error_message" *ngIf="vehicleNumber.errors?.['required']"
+          >This field is required.</label
+        >
+        <label class="error_message" *ngIf="vehicleNumber.errors?.['maxlength']"
+          >This field could have at most 25 characters.</label
+        >
+      </div>
+    </div>
+
+    <!-- Vehicle Type -->
+    <div class="textfield">
+      <label class="name_lable required" for="vehicleType">Vehicle Type</label>
+      <label
+        *ngIf="!isNewVehicle"
+        class="label_text_box"
+        type="text"
+        id="vehicleType"
+        name="vehicleType"
+        >{{ vehicleForm.value.vehicleType }}</label
+      >
+      <ng-select
+        *ngIf="isNewVehicle"
+        name="slot"
+        id="slot"
+        class="dropdown"
+        [ngClass]="{'enable_error': vehicleType.errors?.['notEqual']}"
+        [items]="vehicleTypeList"
+        [markFirst]="true"
+        [searchable]="false"
+        bindLabel="type"
+        bindValue="type"
+        [clearable]="false"
+        formControlName="vehicleType"
+      >
+      </ng-select>
+      <div class="error_message_div">
+        <label class="error_message" *ngIf="vehicleType.errors?.['notEqual']"
+          >This field is required.</label
+        >
+      </div>
+    </div>
+
+    <!-- Contact Number -->
+    <div class="textfield">
+      <label class="name_lable required" for="name">Contact Number</label>
+      <label
+        *ngIf="!isNewVehicle"
+        class="label_text_box"
+        type="text"
+        id="contactNumber"
+        name="contactNumber"
+        >{{ vehicleForm.value.contactNumber }}</label
+      >
+      <input
+        *ngIf="isNewVehicle"
+        class="text_box"
+        [ngClass]="{'enable_error': contactNumber.errors?.['required'] || contactNumber.errors?.['maxlength']}"
+        type="text"
+        id="contactNumber"
+        name="contactNumber"
+        formControlName="contactNumber"
+        required
+      />
+      <div class="error_message_div">
+        <label
+          class="error_message"
+          *ngIf="contactNumber.errors?.['required'] && isNewVehicle"
+          >This field is required.</label
+        >
+        <label
+          class="error_message"
+          *ngIf="contactNumber.errors?.['maxlength'] && isNewVehicle"
+          >This field could have at most 25 characters.</label
+        >
+      </div>
+    </div>
+
+    <!-- Parking Slot -->
+    <div class="textfield">
+      <label class="name_lable required" for="parkingSlot">Parking Slot</label>
+      <label
+        *ngIf="!isNewVehicle"
+        class="label_text_box"
+        type="text"
+        id="parkingSlot"
+        name="parkingSlot"
+        >{{ vehicleForm.value.parkingSlot }}</label
+      >
+      <ng-select
+        *ngIf="isNewVehicle"
+        name="slot"
+        id="slot"
+        class="dropdown"
+        [ngClass]="{'enable_error': parkingSlot.errors?.['notEqual']}"
+        [items]="slotNumbers"
+        [markFirst]="true"
+        [searchable]="false"
+        bindLabel="slotNumber"
+        bindValue="slotNumber"
+        [clearable]="false"
+        formControlName="parkingSlot"
+      ><ng-option *ngFor="let n of slotNumbers">{{n}}</ng-option>
+      </ng-select>
+      <div class="error_message_div">
+        <label class="error_message" *ngIf="parkingSlot.errors?.['notEqual']"
+          >This field is required.</label
+        >
+      </div>
+    </div>
+
+    <!-- In Time -->
+    <div class="textfield" *ngIf="!isNewVehicle">
+      <label class="name_lable required" for="inTime">In Time</label>
+      <label class="label_text_box" type="text" id="inTime" name="inTime">{{
+        vehicleForm.value.inTime
+      }}</label>
+      <div class="error_message_div">
+        <label class="error_message" *ngIf="inTime.errors?.['required']"
+          >This field is required.</label
+        >
+        <label class="error_message" *ngIf="inTime.errors?.['maxlength']"
+          >This field could have at most 25 characters.</label
+        >
+      </div>
+    </div>
+
+    <!-- Price Per Hour -->
+    <div class="textfield" *ngIf="!isNewVehicle">
+      <label class="name_lable required" for="pricePerHour"
+        >Price Per Hour</label
+      >
+      <label
+        class="label_text_box"
+        type="text"
+        id="pricePerHour"
+        name="pricePerHour"
+        >{{ vehicleForm.value.pricePerHour }}</label
+      >
+      <!-- <div class="error_message_div">
+        <label class="error_message" *ngIf="pricePerHour.errors?.['required']"
+          >This field is required.</label
+        >
+        <label class="error_message" *ngIf="pricePerHour.errors?.['maxlength']"
+          >This field could have at most 25 characters.</label
+        >
+      </div> -->
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      class="btn"
+      type="submit"
+      value="Submit"
+      (click)="isNewVehicle ? park() : takeOver(dialog)"
+    >
+      {{ buttonText }}
+    </button>
+    <span></span>
+    <button type="button" class="btn cancel" (click)="closeForm()">
+      Cancel
+    </button>
+  </div>
+</form>
+
+
+<ng-template #dialog let-c="close" let-d="dismiss">
+  <app-message-box [parkingHour]="parkingTime" [parkingAmount]="parkingAmount" (isDone)="isToComplete($event)"></app-message-box>
+</ng-template>

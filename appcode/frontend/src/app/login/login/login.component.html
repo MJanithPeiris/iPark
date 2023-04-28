@@ -1,0 +1,24 @@
+<div style="height: 100%; width: 100%;">
+    <div class="col-8" style="float: left;">
+      <form class="form_login" [formGroup]="loginForm">
+        <div class="label_welcome">WELCOME</div>
+        <div class="profile_image">
+          <div class="ellipse"></div>
+          <img class="image" src="../../assets/images/user.png"/>
+        </div>
+        
+        <label class="label_email">Email</label>
+        <input type="text" class="textBox" [ngClass]="{'enable_error' : isError}" formControlName="email" required />
+        <label class="label_password">Password</label>
+        <input type="password" class="textBox" [ngClass]="{'enable_error' : isError}" formControlName="password" required />
+        <div  class="error_message_div">
+          <label class="error_message" *ngIf="isError">Email or password is wrong.</label>
+        </div>
+        <label class="label_forgetpassword" (click)="changeIsLogging()"><u>Forget password</u></label>
+        <button class="button_submit" (click)="login()">Sign in</button>        
+      </form>
+  </div>
+  <div class='imageDiv col-4' >
+    <div class="label_ipark">iPark</div>
+  </div>
+</div>

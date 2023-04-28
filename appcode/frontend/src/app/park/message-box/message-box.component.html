@@ -1,0 +1,31 @@
+<form class="form_body">
+    <div class="modal-header">
+      <h5 class="modal-title" id="modal-basic-title">Total Price for Parking</h5>
+    </div>
+
+    <div class="modal-body">
+        <div class="textfield">
+            <label for="parkingHours" class="name_lable">Total Parking Hours</label>
+            <label for="parkingHours" class="label_text_box">{{parkingHour}}</label>
+        </div>
+        <div class="textfield">
+            <label for="parkingHours" class="name_lable">Total Amount for Parking</label>
+            <label for="parkingHours" class="label_text_box">Rs. {{parkingAmount }}</label>
+        </div>
+    </div>
+  
+    <div class="modal-footer">
+      <button
+        class="btn"
+        type="submit"
+        value="Submit"
+        (click)="confirm()"
+      >Ok
+      </button>
+      <span></span>
+      <button type="button" class="btn cancel" (click)="closeForm()">
+        Cancel
+      </button>
+    </div>
+  </form>
+  

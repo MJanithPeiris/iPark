@@ -1,0 +1,94 @@
+<form class="form_body" [formGroup]="subUserForm" >
+    <div class="modal-header">
+        <h5 class="modal-title" id="modal-basic-title">{{formHeading}}</h5>
+    </div>
+    <div class="modal-body">
+      <!-- Name -->
+      <div class="textfield">
+        <label class="name_lable required" for="name">Name</label>
+        <input class="text_box name_text_box" [ngClass]="{'enable_error': name.errors?.['required'] || name.errors?.['maxlength']}" type="text" id="name" name="name" formControlName="name" required />
+          <div  class="error_message_div">
+            <label class="error_message" *ngIf="name.errors?.['required']">This field is required.</label>
+            <label class="error_message" *ngIf="name.errors?.['maxlength']">This field could have at most 25 characters.</label>
+          </div>
+      </div>
+
+      <!-- Email -->
+      <div class="textfield">
+        <label class="name_lable required" for="name">Email</label>
+        <input class="text_box name_text_box" [ngClass]="{'enable_error': email.errors?.['required'] || email.errors?.['maxlength']}" type="text" id="email" name="email" formControlName="email" required />
+        <div  class="error_message_div">
+          <label class="error_message" *ngIf="email.errors?.['required']">This field is required.</label>
+          <label class="error_message" *ngIf="email.errors?.['maxlength']">This field could have at most 25 characters.</label>
+        </div>
+      </div>
+
+      <!-- Contact Number -->
+      <div class="textfield">
+        <label class="name_lable required" for="name">Contact Number</label>
+        <input class="text_box name_text_box" [ngClass]="{'enable_error': contactNumber.errors?.['required'] || contactNumber.errors?.['maxlength']}" type="text" id="contactNumber" name="contactNumber" formControlName="contactNumber" required />
+        <div  class="error_message_div">
+          <label class="error_message" *ngIf="contactNumber.errors?.['required']">This field is required.</label>
+          <label class="error_message" *ngIf="contactNumber.errors?.['maxlength']">This field could have at most 25 characters.</label>
+        </div>
+      </div>
+
+      <!-- User Role -->
+      <div class="textfield" *ngIf="isNewSubUser">
+        <label class="name_lable required" for="name">User Role</label>
+        <input class="text_box name_text_box" type="submit" id="userRole" name="userRole" formControlName="userRole" required/>
+        <div  class="error_message_div">
+          <label class="error_message" *ngIf="userRole.errors?.['required']">This field is required.</label>
+          <label class="error_message" *ngIf="userRole.errors?.['maxlength']">This field could have at most 25 characters.</label>
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="textfield">
+        <label class="name_lable required" for="name">Location</label>
+        <input class="text_box name_text_box" [ngClass]="{'enable_error': location.errors?.['required'] || location.errors?.['maxlength']}" type="text" id="location" name="location" formControlName="location" required />
+        <div  class="error_message_div">
+          <label class="error_message" *ngIf="location.errors?.['required']">This field is required.</label>
+          <label class="error_message" *ngIf="location.errors?.['maxlength']">This field could have at most 25 characters.</label>
+        </div>
+      </div>
+      
+      <!-- Slot Count -->
+      <div class="textfield">
+        <label class="name_lable required" for="name">Slot Count</label>
+        <input class="text_box name_text_box" [ngClass]="{'enable_error': slotCount.errors?.['required'] || slotCount.errors?.['maxlength']}" type="text" id="slotCount" name="slotCount" formControlName="slotCount" required />
+        <div  class="error_message_div">
+          <label class="error_message" *ngIf="slotCount.errors?.['required']">This field is required.</label>
+          <label class="error_message" *ngIf="slotCount.errors?.['maxlength']">This field could have at most 25 characters.</label>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="textfield" *ngIf="isNewSubUser">
+        <label class="name_lable required" for="name">Password</label>
+        <input class="text_box name_text_box" [ngClass]="{'enable_error': password.errors?.['required'] || password.errors?.['maxlength'] || !isPasswordMatched}" type="password" id="password" name="password" formControlName="password" required />
+        <div  class="error_message_div">
+          <label class="error_message" *ngIf="password.errors?.['required']">This field is required.</label>
+          <label class="error_message" *ngIf="password.errors?.['maxlength']">This field could have at most 25 characters.</label>
+          <label class="error_message" *ngIf="!isPasswordMatched">Both passwords are not matched.</label>
+        </div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="textfield" *ngIf="isNewSubUser">
+        <label class="name_lable required" for="name">Confirm Password</label>
+        <input class="text_box name_text_box" [ngClass]="{'enable_error': confirmPassword.errors?.['required'] || confirmPassword.errors?.['maxlength'] || !isPasswordMatched}" type="password" id="confirmPassword" name="confirmPassword" formControlName="confirmPassword" required />
+        <div  class="error_message_div">
+          <label class="error_message" *ngIf="confirmPassword.errors?.['required']">This field is required.</label>
+          <label class="error_message" *ngIf="confirmPassword.errors?.['maxlength']">This field could have at most 25 characters.</label>
+          <label class="error_message" *ngIf="!isPasswordMatched">Both passwords are not matched.</label>
+        </div>
+      </div>
+    </div>
+  
+    <div class="modal-footer">
+        <button class="btn"  type="submit" value="Submit" (click)="isNewSubUser? addToList(): update()">{{buttonText}}</button>
+        <span></span>
+        <button type="button" class="btn cancel" (click)="closeForm()">Cancel</button>
+    </div>
+  </form>

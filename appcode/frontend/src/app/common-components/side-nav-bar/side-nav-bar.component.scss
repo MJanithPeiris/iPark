@@ -1,0 +1,189 @@
+.sidenav {
+    // height: 100%;
+    // width:52px;
+    // position: fixed;
+    // z-index: 1;
+    // top: 0;
+    // left: 0;
+    // background-color: #196F3D;
+    // overflow-x: hidden;
+    // padding-top: 15px;
+    // text-align: center;
+
+    height: 52px;
+    width: 100%;
+    background-color: #196F3D;
+
+    .ipark{
+        height: 40px;
+        margin-top: 5.5px;
+        margin-left: 12px;
+        float: left;
+    }
+
+    .welcome_label{
+        padding-top: 6px;
+        color: whitesmoke;
+        margin-left: 125px;
+        
+    }
+
+    .parking_slot{
+        width: 50px;
+        height: 40px;
+        background-color: #D9D9D9;
+        position:absolute;
+        right: 75px;
+        top: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .parking_slot_image{
+        width: 55px;
+        position: absolute;
+        object-fit: cover;
+        right: -2px;
+        top: 3.5px;
+        
+    }
+
+    .revenue{
+        width: 50px;
+        height: 40px;
+        background-color: #D9D9D9;
+        position:absolute;
+        right: 140px;
+        top: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .revenue_image{
+        width: 42px;
+        position: absolute;
+        object-fit: cover;
+        right: 4px;
+        top: -3.5px;
+    }
+
+    .user{
+        width: 45px;
+        height: 45px;
+        border-radius: 23px;
+        background-color: #D9D9D9;
+        position:absolute;
+        // bottom: 15px;
+        // left: 0;
+        top: 2px;
+        right: 12px;
+        margin: 0 auto;
+        vertical-align: middle;
+        cursor: pointer;
+
+        .ellipse {
+            background-color: #154360;
+            border-radius: 35px;
+            height: 35px;
+            width: 35px;
+            left: 3px;
+            position: absolute;
+            bottom: 5px;
+            left: -4px;
+            right: 0;
+            margin: 0 auto;
+          }
+          .image {
+            height: 40px;
+            width: 40px;
+            position: absolute;
+          
+          bottom: 2.5px;
+          left: 0;
+          right: 0;
+          margin: 0 auto;
+          }
+    }
+    .profile_image{
+        left: 50%;
+        margin: -85px 0 0 -40px;
+        vertical-align: middle; 
+    }
+}
+
+.signout{
+    background-color: #1A5276;
+    width: 275px;
+    height: auto;
+    border-radius: 7px;
+    color: white;
+    position: absolute;
+    right: 2px;
+    top: 54px;
+    
+    .user_logo{
+        margin-left: 10px;
+        margin-top: 10px;
+        width: 40px;
+        height: 40px;
+        border-radius: 23px;
+        background-color: #D9D9D9;
+        position:absolute;
+        top: 0;
+        left: 0;
+        vertical-align: middle;
+        .image {
+            margin-top: 3px;
+            margin-left: 2.5px;
+            height: 35px;
+            width: 35px;
+            position: absolute;
+        }
+    }
+    .label_username{
+        margin-left: 58px;
+        padding-top: 6px;
+        font-size: 14px;
+        display: block;
+    }
+    .line{
+        margin-top: 14px;
+        height: 1px;
+        background-color: #D9D9D9;
+    }
+    .label_signout{
+        margin-top: 3px;
+        margin-left: 10px;
+        padding-bottom: 7px;
+        width: 55px;
+        cursor: pointer;
+    }
+}
+
+:host ::ng-deep .popover {
+    background: transparent !important;
+    position: inherit !important;
+    display: block;
+    --bs-popover-body-padding-x: 0;
+    --bs-popover-body-padding-y: 0;
+    --bs-popover-arrow-border: #1A5276;
+    z-index: 1060;
+// --bs-popover-arrow-border: rgb(1, 26, 59);
+    transform: none !important;
+}
+
+// :host::ng-deep .arrow{
+//     position: absolute;
+// }
+
+// :host ::ng-deep .popover-arrow:after{
+//     border-right-color:transparent !important;
+//     border-bottom-color: transparent!important;
+//     border-color: transparent;
+// }
+
+// :host::ng-deep .dx-popover-arrow::after {
+//     background: transparent !important;
+// }   
+
+//   :host::ng-deep .popover-arrow{
+//     transform: translate3d(129.455px, 0px, 0px) !important;
+//   }

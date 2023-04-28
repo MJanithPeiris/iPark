@@ -1,0 +1,54 @@
+.main {
+  text-align: center;
+  height: calc(100% - 82px);
+  width: 95%;
+  margin-left: 55px;
+
+  .header {
+    margin-top: 30px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    .btn {
+      background-color: #d9d9d9;
+      color: #3498db;
+      border-width: 2px;
+      border-color: #3498db;
+      border-radius: 5px;
+      height: 36px;
+      width: 105px;
+      font-size: 14px;
+      margin-top: 2px;
+      position: absolute;
+      right: 2%;
+    }
+  }
+
+  .slot_view {
+    overflow-y: scroll;
+    height: calc(100% - 60px);
+    .horizontal {
+      display: flex;
+      flex-wrap: wrap;
+
+      .parked_slot {
+        height: 180px;
+        width: 118px;
+        border-color: #a93226 !important;
+        color: #a93226;
+        border-width: 4px !important;
+        border: solid;
+        margin-top: 8px;
+        margin-left: 8px;
+        vertical-align: middle;
+        padding-top: 50px;
+        font-size: 50px;
+        cursor: pointer;
+      }
+      .free_slot {
+        border-color: #1e8449 !important;
+        color: #1e8449;
+      }
+    }
+  }
+}
