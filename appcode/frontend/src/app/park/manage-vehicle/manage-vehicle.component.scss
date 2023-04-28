@@ -1,0 +1,15 @@
+.search_button {
+  background: #3498db;
+  float: right;
+  height: 26px;
+  width: 32px;
+  position: absolute;
+  top: 21px;
+  right: 20px;
+  border-radius: 2px;
+  border: none;
+}
+
+.search_button:hover {
+  background: transparent;
+}

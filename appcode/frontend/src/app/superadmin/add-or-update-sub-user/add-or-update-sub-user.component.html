@@ -66,20 +66,22 @@
       <!-- Password -->
       <div class="textfield" *ngIf="isNewSubUser">
         <label class="name_lable required" for="name">Password</label>
-        <input class="text_box name_text_box" [ngClass]="{'enable_error': password.errors?.['required'] || password.errors?.['maxlength']}" type="password" id="password" name="password" formControlName="password" required />
+        <input class="text_box name_text_box" [ngClass]="{'enable_error': password.errors?.['required'] || password.errors?.['maxlength'] || !isPasswordMatched}" type="password" id="password" name="password" formControlName="password" required />
         <div  class="error_message_div">
           <label class="error_message" *ngIf="password.errors?.['required']">This field is required.</label>
           <label class="error_message" *ngIf="password.errors?.['maxlength']">This field could have at most 25 characters.</label>
+          <label class="error_message" *ngIf="!isPasswordMatched">Both passwords are not matched.</label>
         </div>
       </div>
 
       <!-- Confirm Password -->
       <div class="textfield" *ngIf="isNewSubUser">
         <label class="name_lable required" for="name">Confirm Password</label>
-        <input class="text_box name_text_box" [ngClass]="{'enable_error': confirmPassword.errors?.['required'] || confirmPassword.errors?.['maxlength']}" type="password" id="confirmPassword" name="confirmPassword" formControlName="confirmPassword" required />
+        <input class="text_box name_text_box" [ngClass]="{'enable_error': confirmPassword.errors?.['required'] || confirmPassword.errors?.['maxlength'] || !isPasswordMatched}" type="password" id="confirmPassword" name="confirmPassword" formControlName="confirmPassword" required />
         <div  class="error_message_div">
           <label class="error_message" *ngIf="confirmPassword.errors?.['required']">This field is required.</label>
           <label class="error_message" *ngIf="confirmPassword.errors?.['maxlength']">This field could have at most 25 characters.</label>
+          <label class="error_message" *ngIf="!isPasswordMatched">Both passwords are not matched.</label>
         </div>
       </div>
     </div>

@@ -5,11 +5,16 @@
         <h2 >Parking Slot</h2>
         <button class="btn" (click)="goBack()">Back</button>
     </div>
-    <div class="horizontal">
-        <div *ngFor="let slot of slots; let i = index" class="parked_slot" [ngClass]="{'free_slot': !slot}" (click)="slotInfo(i)">
-            {{i+1}}
+    <div class="slot_view">
+        <div class="horizontal">
+            <div *ngFor="let slot of parkingLot?.slotInfo let i = index" class="parked_slot" [ngClass]="{'free_slot': !slot.status}" (click)="slotInfo(slot, viewvehicle)">
+                {{slot.id}}
+            </div>
         </div>
     </div>
     
-
 </div>
+
+<ng-template #viewvehicle let-c="close" let-d="dismiss">
+    <app-manage-vehicle [isNewVehicle]="false" [onlyView]="true" [slot]="selectedSlot" (isDone)="isDone($event)"></app-manage-vehicle>
+</ng-template>

@@ -3,7 +3,7 @@
     
     <div class="detail">
         <div class="topdiv">
-            <label class="user_name">{{user.name}}</label>
+            <label class="user_name">{{user?.name}}</label>
             <!-- <img src="../../assets/images/threedots.png" class="button_option" placement="bottom" 
             [ngbPopover]="popContent" (click)="setPopup(currentUser, true)"> -->
         </div>
@@ -14,8 +14,8 @@
                     <div class="col-xs-3 col-sm-auto">
                         <input id="sub-user-table-filtering-search" 
                         class="form-control search" 
-                        type="text" [formControl]="userfilter"
-                        (input)="onSearchChange(userfilter.value)" 
+                        type="text" [formControl]="userFilter"
+                        (input)="onSearchChange(userFilter.value)" 
                         placeholder="Search"/>
                     </div>
                 </form>
@@ -36,7 +36,7 @@
                     <th scope="col" class="rid_cell col-sm-2"><span class ="dash"></span><span >Slot Count</span></th>
                 </tr>
             </thead>
-            <tbody *ngIf="subUserDisplayList.length > 0">
+            <tbody *ngIf="subUserDisplayList?.length">
                 <tr *ngFor="let subUser of subUserDisplayList; let i = index"  style="cursor: pointer;" [ngClass]="{'disable_color': !subUser.isActive, 'selected_color': selectedIndex==i}" (click)="select(); setId(i, subUser)" >
                     <td>
                         <button type="button" class="edit_button " placement="bottom" 
@@ -44,16 +44,16 @@
                             &#10247;
                         </button>
                     </td>
-                    <td><ngb-highlight class="space textlimit_start" [result]="subUser.name" [term]="userfilter.value"></ngb-highlight></td>
-                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.email" [term]="userfilter.value"></ngb-highlight></td>
-                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.contactNumber" [term]="userfilter.value"></ngb-highlight></td>
-                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.isActive.toString()" [term]="userfilter.value"></ngb-highlight></td>
-                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.location" [term]="userfilter.value"></ngb-highlight></td>
-                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.slotCount" [term]="userfilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_start" [result]="subUser.name" [term]="userFilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.email" [term]="userFilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.contactNumber" [term]="userFilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.isActive.toString()" [term]="userFilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.parkingLot.location" [term]="userFilter.value"></ngb-highlight></td>
+                    <td><ngb-highlight class="space textlimit_name" [result]="subUser.parkingLot.slotCount.toString()" [term]="userFilter.value"></ngb-highlight></td>
                 </tr>
             </tbody>
         </table>
-        <div *ngIf="subUserDisplayList.length <= 0" style="height: 300px; width: 100%; text-align: center;"><h5 style="padding-top: 150px;">No Records Available</h5></div>
+        <div *ngIf="!subUserDisplayList?.length" class="no_records"><h5 style="padding-top: 150px;">No Records Available</h5></div>
 
         <div class="d-flex p-2">
             <div class="start col-1">
@@ -84,7 +84,7 @@
         <div class="pop">
             <div class="user_option_body">
                 <div class="option" (click)="edit(updatesubuser)">Edit</div>
-                <div class="option" (click)="deleteUser(deleteuser)">Delete</div>
+                <div class="option" (click)="isToDelete(deleteuser)">Delete</div>
                 <div class="option" (click)="changeActivateStatus(changeuser)">{{popupString}}</div>
             </div>
         </div>
@@ -101,15 +101,15 @@
     </ng-template> -->
 
     <ng-template #addsubuser let-c="close" let-d="dismiss">
-        <app-add-or-update-sub-user [isNewSubUser]="true"></app-add-or-update-sub-user>
+        <app-add-or-update-sub-user [isNewSubUser]="true" [parentId]="user.userId" (isDone)="isCompleted($event)"></app-add-or-update-sub-user>
     </ng-template>
 
     <ng-template #updatesubuser let-c="close" let-d="dismiss">
-        <app-add-or-update-sub-user [isNewSubUser]="false" [subUser]="currentSubUser"></app-add-or-update-sub-user>
+        <app-add-or-update-sub-user [isNewSubUser]="false" [subUser]="currentSubUser" (isDone)="isCompleted($event)"></app-add-or-update-sub-user>
     </ng-template>
 
     <ng-template #deleteuser let-c="close" let-d="dismiss">
-        <app-dialog-box [isForDelete]="true" (isDone)="isToComplete($event)"></app-dialog-box>
+        <app-dialog-box [isForDelete]="true" (isDone)="deleteSubUser($event)"></app-dialog-box>
     </ng-template>
 
     <ng-template #changeuser let-c="close" let-d="dismiss">

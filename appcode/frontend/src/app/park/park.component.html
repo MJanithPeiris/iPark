@@ -10,9 +10,9 @@
 <!-- <button style="margin-left: 100px; background-color: red;" (click)="test()" >test</button> -->
 
 <ng-template #parkvehicle let-c="close" let-d="dismiss">
-    <app-manage-vehicle [isNewVehicle]="true"></app-manage-vehicle>
+    <app-manage-vehicle [isNewVehicle]="true" (isDone)="isDone($event)"></app-manage-vehicle>
 </ng-template>
 
 <ng-template #takeovervehicle let-c="close" let-d="dismiss">
-    <app-manage-vehicle [isNewVehicle]="false"></app-manage-vehicle>
+    <app-manage-vehicle [isNewVehicle]="false" (isDone)="isDone($event)"></app-manage-vehicle>
 </ng-template>

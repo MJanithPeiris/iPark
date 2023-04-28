@@ -1,11 +1,11 @@
-export class ParkingSlot{
-    vehicleNumber!: string;
-    vehicleType!: string;
-    contactNumber!: string;
-    parkingSlot!: number;
-    inTime!: Date;
-    pricePerHour!: number;
-}
+// export class ParkingSlot{
+//     vehicleNumber!: string;
+//     vehicleType!: string;
+//     contactNumber!: string;
+//     parkingSlot!: number;
+//     inTime!: Date;
+//     pricePerHour!: number;
+// }
 
 export class ParkingLot{
     _id!: string;
@@ -13,6 +13,14 @@ export class ParkingLot{
   slotCount!: number;
   location!: string;
   slotInfo!: Slot[];
+
+
+  constructor(slotCount?: number, location?: string);
+  
+  constructor(slotCount: number, location: string){
+    this.slotCount = slotCount;
+    this.location = location;
+  }
 }
 
 export class Slot{
@@ -22,6 +30,6 @@ export class Slot{
     vehicleNumber!: string;
     vehicleType!: string;
     contactNumber!: string;
-    inTime!: Date | null;
+    inTime!: Date;
     pricePerHour!: number;
 }

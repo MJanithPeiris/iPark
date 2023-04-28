@@ -8,6 +8,8 @@ import { CommonComponentsModule } from '../common-components/common-components.m
 import { ManageVehicleComponent } from './manage-vehicle/manage-vehicle.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { MessageBoxComponent } from './message-box/message-box.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 
@@ -16,6 +18,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     ParkComponent,
     SlotsComponent,
     ManageVehicleComponent,
+    MessageBoxComponent,
   ],
   imports: [
     ParkRoutingModule,
@@ -23,6 +26,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     RouterModule,
     CommonModule,
     FormsModule,
+    NgbModule,
     ReactiveFormsModule,
     NgSelectModule,
   ]

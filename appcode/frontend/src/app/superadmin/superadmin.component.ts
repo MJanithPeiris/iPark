@@ -1,253 +1,341 @@
-import { Component, OnInit } from "@angular/core";
-import { FormControl } from "@angular/forms";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { SubUser, User } from "../data-model/User";
-import { NotificationService } from "../services/notification.service";
+import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ResponseModel, User } from '../data-model/User';
+import { NotificationService } from '../services/notification.service';
+import { UserService } from '../services/user.service';
+import { ParkingLot } from '../data-model/ParkingSlot';
 
 @Component({
   selector: 'app-superadmin',
   templateUrl: './superadmin.component.html',
-  styleUrls: ['./superadmin.component.scss']
+  styleUrls: ['./superadmin.component.scss'],
 })
 export class SuperadminComponent implements OnInit {
+  users!: User[];
+  displayUserList!: User[];
 
-   users : User[] = [
-    {id: 1, name: "Test Customer", isActive : true, email : "examplzdfe12345678@gmail.com", contactNumber : "0711933120", userRole: "SuperAdmin", subUsers: [
-      {id : 1, name: "Janith Peiris", isActive : true , location : "Panadura", slotCount : "20", email : "examplzdfe12345678@gmail.com", contactNumber : "0711933120", parentId: 1, userRole: "parking"},
-      {id : 2, name: "Tha Peiris", isActive : false , location : "Moratuwa", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 1, userRole: "parking"},
-      {id : 3, name: "Malith Peiris", isActive : true , location : "ambalangoda", slotCount : "20", email : "exampasdfaszhj12345678@gmail.com", contactNumber : "0711933120", parentId: 1, userRole: "parking"},
-      {id : 4, name: "Re Peiris", isActive : false , location : "kosgoda", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 1, userRole: "parking"},
-      {id : 5, name: "Pre Peiris", isActive : true , location : "panduwas", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 1, userRole: "parking"}
-    ]},
-    {id: 2, name: "test 2", isActive : true, email : "examplzdfe12345678@gmail.com", contactNumber : "0711933120", userRole: "company", subUsers: [
-      {id : 1, name: "Janith Peiris", isActive : true , location : "Panadura", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 2, userRole: "parking"},
-      {id : 2, name: "Janith Peiris", isActive : true , location : "Panadura", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 2, userRole: "parking"},
-      {id : 3, name: "Janith Peiris", isActive : true , location : "Panadura", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 2, userRole: "parking"},
-    ]},
-    {id: 3, name: "test 3", isActive : false, email : "examplzdfe12345678@gmail.com", contactNumber : "0711933120", userRole: "SuperAdmin", subUsers: [
-      {id : 1, name: "Janith Peiris", isActive : true , location : "Panadura", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 3, userRole: "parking"},
-      {id : 2, name: "Janith Peiris", isActive : true , location : "Panadura", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 3, userRole: "parking"},
-    ]},
-    {id: 4, name: "test 4", isActive : true, email : "examplzdfe12345678@gmail.com", contactNumber : "0711933120", userRole: "company", subUsers: [
-      {id : 1, name: "Janith Perera", isActive : true , location : "Panadura", slotCount : "30", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 4, userRole: "parking"},
-      {id : 2, name: "Janith Peiris", isActive : true , location : "Panadura", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 4, userRole: "parking"},
-      {id : 3, name: "Janith Peiris", isActive : true , location : "Panadura", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 4, userRole: "parking"},
-      {id : 4, name: "iresh", isActive : true , location : "Panadura", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 4, userRole: "parking"},
-      {id : 5, name: "Janith Peiris", isActive : true , location : "Panadura", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 4, userRole: "parking"},
-      {id : 6, name: "Janith Peiris", isActive : true , location : "Panadura", slotCount : "20", email : "example12345678@sgmail.com", contactNumber : "0711933120", parentId: 4, userRole: "parking"},
-      {id : 7, name: "Janith Peiris", isActive : true , location : "Panadura", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 4, userRole: "parking"},
-      {id : 8, name: "Janith Peiris", isActive : true , location : "Panadura", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 4, userRole: "parking"},
-      {id : 9, name: "Janith Peiris", isActive : true , location : "Panadura", slotCount : "20", email : "example12345678@gmail.com", contactNumber : "0711933120", parentId: 4, userRole: "parking"},
-    ]},
-    {id: 5, name: "test 5", isActive : false, email : "examplzdfe12345678@gmail.com", contactNumber : "0711933120", userRole: "company", subUsers: []}
-  ];
+  subUserList!: User[];
+  subUserDisplayList!: User[];
 
-  currentUser! : User;
-  currentSubUser! : SubUser;
+  currentUser: User = {
+    userId: 1,
+    name: 'default user name',
+    email: 'default',
+    contactNumber: 'default',
+    isActive: true,
+    isDeleted: false,
+    userRole: 'default',
+    id: 0,
+    parentId: 0,
+    parkingLot: new ParkingLot(),
+    accessToken: '',
+    subUsers: [],
+  };
+  currentSubUser!: User;
 
-  subUserList! : SubUser[];
-  subUserDisplayList = this.subUserList;
-
-  displayUserList = this.users;
-
-  userfilter = new FormControl('', { nonNullable: true });
-  companyfilter = new FormControl('', { nonNullable: true });
+  userFilter = new FormControl('', { nonNullable: true });
+  companyFilter = new FormControl('', { nonNullable: true });
 
   userSelectedIndex = 0;
   subUserSelectedIndex = 0;
 
   popupString = 'Deactivate';
-  isUser! : boolean;
+  isUser!: boolean;
 
-  collectionSize! : number;
+  collectionSize!: number;
   page = 1;
   pageSize = 6;
 
-  constructor(private modalService: NgbModal, private notifyService : NotificationService) { }
+  constructor(
+    private modalService: NgbModal,
+    private notifyService: NotificationService,
+    private _userService: UserService
+  ) {}
 
   ngOnInit(): void {
-
-    this.currentUser = this.users[0];
-    this.subUserList = this.currentUser.subUsers
-    this.subUserDisplayList = this.currentUser.subUsers;
-    this.collectionSize = this.subUserList.length;
-    this.refreshGrid();
+    this.refreshPage();
   }
 
-  test(s : any){
-    let d = this.users.find(_=>_.id == s.id);
-    if(d && d.isActive){
+  test(s: any) {
+    let d = this.users.find((_) => _.id == s.id);
+    if (d && d.isActive) {
       d.isActive = false;
-    }else if(d){
+    } else if (d) {
       d.isActive = true;
     }
   }
 
-  select(){
+  select() {}
 
-  }
-
-  isSuperAdmin(userRole: string) : boolean{
-    if(userRole.toLowerCase() == 'superadmin'){
+  isSuperAdmin(userRole?: string): boolean {
+    if (userRole?.toLowerCase() == 'superadmin') {
       return true;
     }
     return false;
   }
 
-  usersearch(text: string) {
-		return this.subUserList.filter((item) => {
-			const term = text.toLowerCase();
-			if (item && item.name && item.location && item.contactNumber) {
-				return (
-					// item.id.toString().includes(term) ||
-					item.name.toLowerCase().includes(term) ||
-					item.location.toLowerCase().includes(term)||
+  userSearch(text: string) {
+    return this.subUserList.filter((item) => {
+      const term = text.toLowerCase();
+      if (item && item.name && item.parkingLot.location && item.contactNumber) {
+        return (
+          // item.id.toString().includes(term) ||
+          item.name.toLowerCase().includes(term) ||
+          item.parkingLot.location.toLowerCase().includes(term) ||
           item.contactNumber.toLowerCase().includes(term)
-				);
-			}
-			else {
-				return [];
-			}
-		});
-	}
+        );
+      } else {
+        return [];
+      }
+    });
+  }
 
   onSearchChange(text: string) {
-    this.subUserDisplayList = this.usersearch(text);
-    if(text === ''){
+    this.subUserDisplayList = this.userSearch(text);
+    if (text === '') {
       this.page = this.page;
       this.refreshGrid();
-    }else{
+    } else {
       this.refreshSearch();
     }
-}
+  }
 
+  companySearch(text: string) {
+    return this.users.filter((item) => {
+      const term = text.toLowerCase();
+      if (item && item.name) {
+        return (
+          // item.id.toString().includes(term) ||
+          item.name.toLowerCase().includes(term)
+        );
+      } else {
+        return [];
+      }
+    });
+  }
 
-companySearch(text: string){
-  return this.users.filter((item) => {
-    const term = text.toLowerCase();
-    if (item && item.name) {
-      return (
-        // item.id.toString().includes(term) ||
-        item.name.toLowerCase().includes(term)
-      );
-    }
-    else {
-      return [];
-    }
-  });
-}
+  onSearchChang(text: string) {
+    this.displayUserList = this.companySearch(text);
+  }
 
-onSearchChang(text: string) {
-  this.displayUserList = this.companySearch(text);
-}
-
-  setId(id: number, a :User) {
-		this.userSelectedIndex = id;
+  setId(id: number, a: User) {
+    this.userSelectedIndex = id;
     this.currentUser = a;
     this.subUserList = a.subUsers;
     this.subUserDisplayList = a.subUsers;
     this.collectionSize = a.subUsers.length;
     this.refreshGrid();
-	}
+  }
 
-  setSubUser(id: number, a:SubUser){
+  setSubUser(id: number, a: User) {
     this.subUserSelectedIndex = id;
     this.currentSubUser = a;
   }
 
-  companyOptionSelect(){
-    console.log('company option')
+  companyOptionSelect() {
+    console.log('company option');
   }
-  openForm(content: any, _isNewToDo : boolean){
+
+  openForm(content: any, _isNewToDo: boolean) {
     this.modalService.open(content);
   }
 
-  setPopup(subUser: any, isUser : boolean){
+  setPopup(subUser: User, isUser: boolean) {
     this.isUser = isUser;
 
-    if(subUser.isActive){
+    if (subUser.isActive) {
       this.popupString = 'Deactivate';
-    }else{
-      this.popupString = 'Activate'
+    } else {
+      this.popupString = 'Activate';
     }
   }
 
-  edit(content : any){
+  edit(content: any) {
     this.modalService.open(content);
   }
 
-  deleteUser(content : any){
-    this.modalService.open(content , { size: 'sm' });
-  }
-
-  changeActivateStatus(content : any){
+  isToDelete(content: any) {
     this.modalService.open(content, { size: 'sm' });
   }
 
-  changeUserActivateStatus(isTrue : boolean){
-    if(this.isUser){
-      let d = this.users.find(_=>_.id == this.currentUser.id);
-      if(d && isTrue){
-        d.isActive =!this.currentUser.isActive;
-        let s = d.isActive ? 'activated' : 'deactivated';
-        this.notifyService.showSuccess('User '+s+' successfully!!', '');
-      }else{
-        this.notifyService.showError('Unable to delete the user', '');
-      }
-    }else{
-      let d = this.subUserDisplayList.find(_=>_.id == this.currentSubUser.id);
-      if(d && isTrue){
-        console.log(d.isActive)
-        d.isActive =!this.currentSubUser.isActive;
-        console.log(d.isActive)
-        let s = d.isActive? 'activated' : 'deactivated';
-        this.notifyService.showSuccess('Subuser '+s+' successfully!!', '');
-      }else{
-        this.notifyService.showError('Unable to delete the user', '');
-      }
-    }
-    
+  changeActivateStatus(content: any) {
+    this.modalService.open(content, { size: 'sm' });
   }
 
-  isUserAdded(isTrue: boolean, isUserAdded: boolean){
-    if(isUserAdded){
-      if(isTrue){
-        this.notifyService.showSuccess("User added successfully !!", "");
-      }else{
-        this.notifyService.showError("Unable to add the user", "");
+  changeUserActivateStatus(isTrue: boolean) {
+    if (this.isUser) {
+      let user = this.displayUserList.find(
+        (_) => _.userId == this.currentUser.userId
+      );
+      if (user && isTrue) {
+        if (this.currentUser.isActive) {
+          this._userService.deactivateUser(user.userId).subscribe({
+            next: (res: ResponseModel) => {
+              if (res.response && user) {
+                user.isActive = !this.currentUser.isActive;
+                this.notifyService.showSuccess(res.message, '');
+                this.refreshPage();
+              } else {
+                this.notifyService.showError(res.message, '');
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              this.notifyService.showError(error, '');
+            },
+          });
+        } else {
+          this._userService.activateUser(user.userId).subscribe({
+            next: (res: ResponseModel) => {
+              if (res.response && user) {
+                user.isActive = !this.currentUser.isActive;
+                this.notifyService.showSuccess(res.message, '');
+                this.refreshPage();
+              } else {
+                this.notifyService.showError(res.message, '');
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              this.notifyService.showError(error, '');
+            },
+          });
+        }
+      } else {
+        this.notifyService.showError('Unable to find the user!!', '');
       }
-    }else{
-      if(isTrue){
-        this.notifyService.showSuccess("User updated successfully !!", "");
-      }else{
-        this.notifyService.showError("Unable to update the user", "");
+    } else {
+      let subUser = this.subUserDisplayList.find(
+        (_) => _.userId == this.currentSubUser.userId
+      );
+      if (subUser && isTrue) {
+        if (this.currentSubUser.isActive) {
+          this._userService.deactivateUser(subUser.userId).subscribe({
+            next: (res: ResponseModel) => {
+              if (res.response && subUser) {
+                subUser.isActive = !this.currentSubUser.isActive;
+                this.notifyService.showSuccess(res.message, '');
+                this.refreshPage();
+              } else {
+                this.notifyService.showError(res.message, '');
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              this.notifyService.showError(error, '');
+            },
+          });
+        } else {
+          this._userService.activateUser(subUser.userId).subscribe({
+            next: (res: ResponseModel) => {
+              if (res.response && subUser) {
+                subUser.isActive = !this.currentSubUser.isActive;
+                this.notifyService.showSuccess(res.message, '');
+                this.refreshPage();
+              } else {
+                this.notifyService.showError(res.message, '');
+              }
+            },
+            error: (error) => {
+              console.log(error);
+              this.notifyService.showError(error, '');
+            },
+          });
+        }
+      } else {
+        this.notifyService.showError('Unable to find the user!!', '');
       }
     }
-    
   }
 
-  isToComplete(isTrue: boolean){
-    if(isTrue){
-      this.notifyService.showSuccess("User deleted successfully !!", "");
-    }else{
-      this.notifyService.showError("Unable to delete the user", "");
+  deleteUser(isTrue: boolean) {
+    if (isTrue) {
+      this._userService.deleteUser(this.currentUser.userId).subscribe({
+        next: (res: ResponseModel) => {
+          console.log(res);
+          if (res.response) {
+            this.notifyService.showSuccess(res.message, '');
+            this.refreshPage();
+          } else {
+            this.notifyService.showError(res.message, '');
+          }
+        },
+        error: (error) => {
+          console.log(error);
+          this.notifyService.showError(error, '');
+        },
+      });
+    }
+  }
+
+  deleteSubUser(isTrue: boolean) {
+    if (isTrue) {
+      this._userService.deleteUser(this.currentSubUser.userId).subscribe({
+        next: (res: ResponseModel) => {
+          console.log(res);
+          if (res.response) {
+            this.notifyService.showSuccess(res.message, '');
+            this.refreshPage();
+          } else {
+            this.notifyService.showError(res.message, '');
+          }
+        },
+        error: (error) => {
+          console.log(error);
+          this.notifyService.showError(error, '');
+        },
+      });
     }
   }
 
   refreshGrid() {
-    this.subUserDisplayList.sort((a,b) => (a.id < b.id)? 1 : -1);
-		this.subUserDisplayList = this.subUserList.map((subUser) => ({ subUser, ...subUser })).slice(
-			(this.page - 1) * this.pageSize,
-			(this.page - 1) * this.pageSize + this.pageSize,
-		);
-	}
-  refreshSearch(){
-    this.collectionSize = this.subUserDisplayList.length;
-    this.subUserDisplayList.sort((a,b) => (a.id < b.id)? 1 : -1);
-		this.subUserDisplayList = this.subUserDisplayList.map((subUser) => ({ subUser, ...subUser })).slice(
-			(this.page - 1) * this.pageSize,
-			(this.page - 1) * this.pageSize + this.pageSize,
-		);
+    this.subUserDisplayList.sort((a, b) => (a.id < b.id ? 1 : -1));
+    this.subUserDisplayList = this.subUserList
+      .map((subUser) => ({ subUser, ...subUser }))
+      .slice(
+        (this.page - 1) * this.pageSize,
+        (this.page - 1) * this.pageSize + this.pageSize
+      );
   }
 
+  refreshSearch() {
+    this.collectionSize = this.subUserDisplayList.length;
+    this.subUserDisplayList.sort((a, b) => (a.id < b.id ? 1 : -1));
+    this.subUserDisplayList = this.subUserDisplayList
+      .map((subUser) => ({ subUser, ...subUser }))
+      .slice(
+        (this.page - 1) * this.pageSize,
+        (this.page - 1) * this.pageSize + this.pageSize
+      );
+  }
+
+  refreshPage() {
+    this._userService.getUsers().subscribe({
+      next: (res: User[]) => {
+        this.users = res.filter(
+          (_) =>
+            _.userRole != 'Parking' &&
+            _.email != sessionStorage.getItem('email')
+        );
+        this.currentUser = res[0];
+        this.subUserList = res[0].subUsers;
+        this.currentSubUser = res[0].subUsers[0];
+        this.displayUserList = this.users;
+        this.subUserDisplayList = this.subUserList;
+        this.collectionSize = this.subUserList.length;
+        this.refreshGrid();
+      },
+      error(err) {},
+    });
+  }
+
+  isCompleted(res: any): void{
+    if (res.response) {
+      this.notifyService.showSuccess(res.message, '');
+      this.refreshPage();
+    }else{
+      this.notifyService.showError(res.message, '');
+    }
+  }
 }

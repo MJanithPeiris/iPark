@@ -2,15 +2,18 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CompanyComponent } from './company.component';
 import { CompanyRevenueComponent } from './company-revenue/company-revenue.component';
+import { AuthGuard } from '../auth/AuthGuard';
 
 const routes: Routes = [
   {
     path: 'company',
-    component: CompanyComponent
+    component: CompanyComponent,
+    canActivate: [AuthGuard], data: { expectedRole: 'ROLE_COMPANY' }
   },
   {
     path: 'company/revenue',
-    component: CompanyRevenueComponent
+    component: CompanyRevenueComponent,
+    canActivate: [AuthGuard], data: { expectedRole: 'ROLE_COMPANY' }
   }
 ];
 

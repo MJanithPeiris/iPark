@@ -1,7 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { User } from 'src/app/data-model/User';
+import { ResponseModel, User, UserRequest } from 'src/app/data-model/User';
+import { NotificationService } from 'src/app/services/notification.service';
+import { UserService } from 'src/app/services/user.service';
 
 
 @Component({
@@ -19,13 +21,14 @@ export class AddOrUpdateUserComponent implements OnInit {
   buttonText!: string;
   userForm! : FormGroup;
   userRoles!: string[];
+  isPasswordMatched = true;
  
   @Input() isNewUser! : boolean;
   @Input() user! : User;
 
   @Output() isDone = new EventEmitter();
 
-  constructor(private _modalService: NgbModal,private fb: FormBuilder) { }
+  constructor(private _modalService: NgbModal,private fb: FormBuilder, private _userService : UserService, private notifyService: NotificationService) { }
   
   ngOnInit(): void {
     this.userForm = this.fb.group({
@@ -70,7 +73,7 @@ export class AddOrUpdateUserComponent implements OnInit {
         contactNumber: this.user.contactNumber,
         userRole: this.user.userRole,
         password: 'password',
-        confirmPassword:'confirmPassword'
+        confirmPassword:'password'
       })
     }
     
@@ -112,26 +115,49 @@ export class AddOrUpdateUserComponent implements OnInit {
 
   addToList(){
     if(this.userForm.valid){
-      this.isDone.emit(true);
-      this._modalService.dismissAll();
-    }else{
-      this.isDone.emit(false);
-      this._modalService.dismissAll();
+      if(this.userForm.value.password === this.userForm.value.confirmPassword){
+        let userRequest = new UserRequest();
+        userRequest.name = this.userForm.value.name;
+        userRequest.email = this.userForm.value.email;
+        userRequest.contactNumber = this.userForm.value.contactNumber;
+        userRequest.userRole = this.userForm.value.userRole;
+        userRequest.password = this.userForm.value.password;
+        
+        this._userService.addUser(userRequest).subscribe({
+          next: (res: ResponseModel) => {
+              this.isDone.emit(res);
+              this._modalService.dismissAll();
+          },
+          error: (error) => {
+            this.isDone.emit({response: false, message: 'Error occurred while updating the user', model: error});
+          },
+        })
+      }else{
+        this.isPasswordMatched = false;
+      }
     }
   }
 
   update(){
     if(this.userForm.valid){
-      this.isDone.emit(true);
-      this._modalService.dismissAll();
-    }else{
-      this.isDone.emit(false);
-      this._modalService.dismissAll();
+      let userRequest = new UserRequest();
+      userRequest.userId = this.user.userId;
+      userRequest.name = this.userForm.value.name;
+      userRequest.email = this.userForm.value.email;
+      userRequest.contactNumber = this.userForm.value.contactNumber;
+      this._userService.updateUser(userRequest).subscribe({
+        next: (res: ResponseModel) => {
+          this.isDone.emit(res);
+          this._modalService.dismissAll();
+        },
+        error: (error) => {
+          this.isDone.emit({response: false, message: 'Error occurred while updating the user', model: error});
+        },
+      })
     }
   }
 
   isToComplete(event: any){
     this.isToDoComplete = event;
   }
-
 }

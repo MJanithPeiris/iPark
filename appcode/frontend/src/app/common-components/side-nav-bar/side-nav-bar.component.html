@@ -1,4 +1,12 @@
 <div class="sidenav">
+    <div>
+        <img class="ipark" src="../../../assets/images/Group 4.jpg">
+    </div>
+
+    <div class="welcome_label">
+        
+        <h2>Welcome to iPark</h2>
+    </div>
     <div class="parking_slot" *ngIf="isParkingSlotVisible" (click)="navigate('slot')">
         <img class="parking_slot_image" src="../../../assets/images/parkingslot.png">
     </div>
@@ -8,7 +16,7 @@
     </div>
     
     <div class="user" 
-	placement="top"
+	placement="bottom"
     [autoClose]="'outside'"
 	[ngbPopover]="signoutpopover">
         <div class="ellipse"></div>
@@ -26,6 +34,5 @@
         <label class="label_username">Email: {{email}}</label>
         <div class="line"></div>
         <div class="label_signout" (click)="signout()">Sign out</div>
-
     </div>
 </ng-template>

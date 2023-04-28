@@ -96,10 +96,11 @@
 
 .detail{
     margin-top: 20px;
-    margin-left: 70px;
+    margin-left: 45px;
     float: left;
     display: block;
-    width: 92%;
+    width: calc(100% - 85px);
+    height: calc(100% - 72px);
     .topdiv{
       .user_name{
         font-size: 28px;
@@ -230,6 +231,11 @@
     // }
   }
   
+  .no_records{
+    height: 300px; 
+    width: 100%; 
+    text-align: center;
+  }
 
   //option
   .pop{
