@@ -48,39 +48,39 @@ exports.addRevenue = (req, res) => {
 exports.getRevenueByParentId = async (req, res) => {
   const parentId = req.params.parentid;
   let revenueInfo = [];
-
-  const subUsers = await User.find({ parentId: parentId }).populate("parkingLot");
-  console.log(subUsers);
-
-  for (let i = 0; i < subUsers.length; i++) {
-    console.log(subUsers[i].userId);
-    console.log(subUsers[i].parkingLot);
-    let amount = 0;
-
-    const condition = { userId: subUsers[i].userId }
-    if(req.body.fromDate && req.body.toDate){
-      condition.date = { $gte: req.body.fromDate, $lte: req.body.toDate };
+  
+  try{
+    const subUsers = await User.find({ parentId: parentId }).populate("parkingLot");
+  
+    for (let i = 0; i < subUsers.length; i++) {
+      let amount = 0;
+  
+      const condition = { userId: subUsers[i].userId }
+      if(req.query.fromDate && req.query.toDate){
+        condition.date = { $gte: req.query.fromDate, $lte: req.query.toDate };
+      }
+      const revenue = await Revenue.find(condition);
+  
+      for (let j = 0; j < revenue.length; j++) {
+        amount += revenue[j].amount;
+      }
+  
+      revenueInfo.push({
+        userId: subUsers[i].userId,
+        name: subUsers[i].name,
+        email: subUsers[i].email,
+        contactNumber: subUsers[i].contactNumber,
+        isActive: subUsers[i].isActive,
+        isDeleted: subUsers[i].isDeleted,
+        parentId: subUsers[i].parentId,
+        location: subUsers[i].parkingLot[0]?.location,
+        slotCount: subUsers[i].parkingLot[0]?.slotCount,
+        totalRevenue: amount,
+      });
     }
-    const revenue = await Revenue.find(condition);
-
-    for (let j = 0; j < revenue.length; j++) {
-      amount += revenue[j].amount;
-    }
-
-    revenueInfo.push({
-      userId: subUsers[i].userId,
-      name: subUsers[i].name,
-      email: subUsers[i].email,
-      contactNumber: subUsers[i].contactNumber,
-      isActive: subUsers[i].isActive,
-      isDeleted: subUsers[i].isDeleted,
-      parentId: subUsers[i].parentId,
-      location: subUsers[i].parkingLot[0]?.location,
-      slotCount: subUsers[i].parkingLot[0]?.slotCount,
-      totalRevenue: amount,
-    });
+    return res.status(200).send(revenueInfo);
   }
-
-  console.log(revenueInfo);
-  return res.send(revenueInfo);
+  catch(err){
+    return res.status(500).send(new ResponseModel(false, "Internal Error Occurred.", err));
+  }
 };
